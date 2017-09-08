@@ -17,3 +17,6 @@ $lv = new LayoutView();
 
 $lv->render(false, $v, $dtv);
 
+require_once('src/Service.php');
+
+$service = new Service();
