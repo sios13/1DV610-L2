@@ -3,7 +3,6 @@
 namespace lab2;
 
 use lab2\Router;
-use lab2\Request;
 
 class Service {
 
@@ -13,6 +12,7 @@ class Service {
         $this->services = array();
 
         $this->services['router'] = new Router();
+        $this->services['view'] = new View();
     }
 
     public function getService(string $serviceName) {
