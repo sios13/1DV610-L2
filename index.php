@@ -20,3 +20,8 @@ $lv->render(false, $v, $dtv);
 require_once('src/Service.php');
 
 $service = new Service();
+
+$router = $service->getService('router');
+$router->addService($service);
+
+$router->route();
