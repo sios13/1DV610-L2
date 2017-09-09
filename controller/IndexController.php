@@ -2,44 +2,38 @@
 
 class IndexController extends lab2\Controller {
 
-    private $v;
-    private $dtv;
-    private $lv;
+    private $layoutView;
 
     public function initialize() {
-        $this->v = new LoginView();
-        $this->dtv = new DateTimeView();
-        $this->lv = new LayoutView();
+        session_start();
+
+        $this->layoutView = new LayoutView();
     }
 
     public function indexAction() {
         echo "indexAction";
 
-        session_start();
+        $loginView = new LoginView();
 
-        if ( isset($_SESSION['user']) )
+        if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST')
-            {
-                $this->v->setMessage("Du har loggat in :)");
-            }
-
-            $this->lv->render(true, $v, $dtv);
+            $loginView->setMessage("Du har loggat in :)");
         }
         else
         {
-            $this->lv->render(false, $v, $dtv);
+            $loginView->setMessage("Hej :)");
         }
+
+        $this->layoutView->render(isset($_SESSION['user']), $loginView);
+
     }
 
     public function registerAction() {
         echo "registerAction";
 
-        $v = new LoginView();
-        $dtv = new DateTimeView();
-        $lv = new LayoutView();
+        $registerView = new RegisterView();
 
-        $lv->render(false, $v, $dtv);
+        $this->layoutView->render(isset($_SESSION['user']), $registerView);
     }
 
     public function notFoundAction() {

@@ -11,7 +11,7 @@ require_once('src/Controller.php');
 require_once('src/View.php');
 
 require_once('view/LoginView.php');
-require_once('view/DateTimeView.php');
+require_once('view/RegisterView.php');
 require_once('view/LayoutView.php');
 
 require_once('controller/IndexController.php');
