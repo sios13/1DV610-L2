@@ -2,7 +2,7 @@
 
 namespace lab2;
 
-class Controller {
+abstract class Controller {
 
     private $service;
 

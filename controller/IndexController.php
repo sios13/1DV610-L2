@@ -2,18 +2,34 @@
 
 class IndexController extends lab2\Controller {
 
-    function __construct() {
+    private $v;
+    private $dtv;
+    private $lv;
 
+    public function initialize() {
+        $this->v = new LoginView();
+        $this->dtv = new DateTimeView();
+        $this->lv = new LayoutView();
     }
 
     public function indexAction() {
         echo "indexAction";
 
-        $v = new LoginView();
-        $dtv = new DateTimeView();
-        $lv = new LayoutView();
+        session_start();
 
-        $lv->render(false, $v, $dtv);
+        if ( isset($_SESSION['user']) )
+        {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST')
+            {
+                $this->v->setMessage("Du har loggat in :)");
+            }
+
+            $this->lv->render(true, $v, $dtv);
+        }
+        else
+        {
+            $this->lv->render(false, $v, $dtv);
+        }
     }
 
     public function registerAction() {
@@ -24,6 +40,10 @@ class IndexController extends lab2\Controller {
         $lv = new LayoutView();
 
         $lv->render(false, $v, $dtv);
+    }
+
+    public function notFoundAction() {
+        echo "Not found";
     }
 
 }
