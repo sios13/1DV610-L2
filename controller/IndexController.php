@@ -11,8 +11,6 @@ class IndexController extends lab2\Controller {
     }
 
     public function indexAction() {
-        echo "indexAction";
-
         $loginView = new LoginView();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
@@ -29,8 +27,6 @@ class IndexController extends lab2\Controller {
     }
 
     public function registerAction() {
-        echo "registerAction";
-
         $registerView = new RegisterView();
 
         $this->layoutView->render(isset($_SESSION['user']), $registerView);
