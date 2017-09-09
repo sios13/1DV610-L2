@@ -17,10 +17,6 @@ class IndexController extends lab2\Controller {
         {
             $loginView->setMessage("Du har loggat in :)");
         }
-        else
-        {
-            $loginView->setMessage("Hej :)");
-        }
 
         $this->layoutView->render(isset($_SESSION['user']), $loginView);
 
