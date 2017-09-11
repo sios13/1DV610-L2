@@ -78,7 +78,7 @@ class IndexController extends lab2\Controller {
 
                 if (strlen($username) < 3)
                 {
-                    $_SESSION['message'] = 'Username has too few characters, at least 3 characters.';
+                    $_SESSION['message'] .= 'Username has too few characters, at least 3 characters.';
                 }
 
                 if (strlen($password) < 6)
