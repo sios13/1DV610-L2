@@ -12,12 +12,12 @@ class LoginView {
 
 	private $userModel;
 
-	private $message;
+	// private $message;
 
 	public function __construct($userModel) {
 		$this->userModel = $userModel;
 
-		$this->message = '';
+		// $this->message = '';
 	}
 
 	/**
@@ -30,14 +30,15 @@ class LoginView {
 	public function response() {
 		if ($this->userModel->isLoggedIn())
 		{
-			return $this->generateLogoutButtonHTML($this->message);
+			return $this->generateLogoutButtonHTML();
 		}
 
-		return $this->generateLoginFormHTML($this->message);
+		return $this->generateLoginFormHTML();
 	}
 
 	public function setMessage($message) {
-		$this->message = $message;
+		// $this->message = $message;
+		$_SESSION['message'] = $message;
 	}
 
 	/**
@@ -45,10 +46,10 @@ class LoginView {
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLogoutButtonHTML($message) {
+	private function generateLogoutButtonHTML() {
 		return '
 			<form  method="post" >
-				<p id="' . self::$messageId . '">' . $message .'</p>
+				<p id="' . self::$messageId . '">' . $this->getMessage() . '</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
@@ -59,12 +60,12 @@ class LoginView {
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLoginFormHTML($message) {
+	private function generateLoginFormHTML() {
 		return '
 			<form method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $message . '</p>
+					<p id="' . self::$messageId . '">' . $this->getMessage() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
 					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
@@ -79,6 +80,14 @@ class LoginView {
 				</fieldset>
 			</form>
 		';
+	}
+
+	private function getMessage() {
+		if (isset($_SESSION['message'])) {
+			return $_SESSION['message'];
+		}
+
+		return '';
 	}
 	
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES

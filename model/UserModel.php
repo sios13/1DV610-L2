@@ -11,7 +11,7 @@ class UserModel extends lab2\Model {
     }
 
     public function isLoggedIn() {
-        return isset($_SESSION['user']);
+        return isset($_SESSION['USER::isLoggedIn']);
     }
 
 }

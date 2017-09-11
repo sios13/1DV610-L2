@@ -19,7 +19,7 @@ class IndexController extends lab2\Controller {
         {
             if (isset($_POST['LoginView::Logout']))
             {
-                unset($_SESSION['user']);
+                unset($_SESSION['USER::isLoggedIn']);
 
                 $loginView->setMessage('Bye bye!');
             }
@@ -27,6 +27,8 @@ class IndexController extends lab2\Controller {
             {
                 $username = $_POST['LoginView::UserName'];
                 $password = $_POST['LoginView::Password'];
+
+                $_SESSION['USER::username'] = $username;
     
                 if ($username == '')
                 {
@@ -40,7 +42,7 @@ class IndexController extends lab2\Controller {
                 {
                     if ($username == $this->userModel->getUsername() && $password == $this->userModel->getPassword())
                     {
-                        $_SESSION['user'] = 'Admin';
+                        $_SESSION['USER::isLoggedIn'] = true;
     
                         $loginView->setMessage('Welcome');
                     }
@@ -50,9 +52,14 @@ class IndexController extends lab2\Controller {
                     }
                 }
             }
+
+            return header("Location: " . $_SERVER['REQUEST_URI']);
         }
 
         $this->services['view']->setOutput($this->layoutView->render($loginView));
+
+        unset($_SESSION['message']);
+        unset($_SESSION['USER::username']);
     }
 
     public function registerAction() {
