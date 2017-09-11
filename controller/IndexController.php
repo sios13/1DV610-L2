@@ -46,7 +46,7 @@ class IndexController extends lab2\Controller {
                     }
                     else
                     {
-                        $loginView->setMessage('Wrong username or password');
+                        $loginView->setMessage('Wrong name or password');
                     }
                 }
             }
