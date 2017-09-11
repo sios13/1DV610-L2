@@ -72,14 +72,16 @@ class IndexController extends lab2\Controller {
                 $username = $_POST['RegisterView::UserName'];
                 $password = $_POST['RegisterView::Password'];
                 $passwordRepeat = $_POST['RegisterView::PasswordRepeat'];
+                
+                $_SESSION['USER::username'] = $username;
 
                 if (strlen($username) < 3)
                 {
                     $_SESSION['message'] = 'Username has too few characters, at least 3 characters.';
                 }
-                else if (strlen($password) < 6)
+                if (strlen($password) < 6)
                 {
-                    $_SESSION['message'] = 'Password has too few characters, at least 6 characters.';
+                    $_SESSION['message'] .= 'Password has too few characters, at least 6 characters.';
                 }
             }
             
@@ -89,6 +91,7 @@ class IndexController extends lab2\Controller {
         $this->services['view']->setOutput($this->layoutView->render($registerView));
 
         unset($_SESSION['message']);
+        unset($_SESSION['USER::username']);
     }
 
 }

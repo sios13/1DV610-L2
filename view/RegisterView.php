@@ -15,7 +15,7 @@ class RegisterView {
                     <legend>Register a new user - Write username and password</legend>
                     <p id="' . self::$messageId . '">' . $this->getMessage() . '</p>
                     <label for="' . self::$name . '">Username :</label>
-                    <input type="text" size="20" name="' . self::$name . '" id="' . self::$name . '" value="" />
+                    <input type="text" size="20" name="' . self::$name . '" id="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
                     <br/>
                     <label for="' . self::$password . '">Password  :</label>
                     <input type="password" size="20" name="' . self::$password . '" id="' . self::$password . '" value="" />
@@ -33,6 +33,14 @@ class RegisterView {
     private function getMessage() {
         if (isset($_SESSION['message'])) {
             return $_SESSION['message'];
+        }
+
+        return '';
+    }
+
+    private function getRequestUserName() {
+        if (isset($_SESSION['USER::username'])) {
+            return $_SESSION['USER::username'];
         }
 
         return '';
