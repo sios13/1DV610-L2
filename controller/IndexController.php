@@ -17,13 +17,13 @@ class IndexController extends lab2\Controller {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
-            if (isset($_POST['LoginView::Logout']))
+            if (isset($_POST['LoginView::Logout']) && $this->userModel->isLoggedIn())
             {
                 unset($_SESSION['USER::isLoggedIn']);
 
                 $loginView->setMessage('Bye bye!');
             }
-            else if (isset($_POST['LoginView::Login']))
+            else if (isset($_POST['LoginView::Login']) && !$this->userModel->isLoggedIn())
             {
                 $username = $_POST['LoginView::UserName'];
                 $password = $_POST['LoginView::Password'];
