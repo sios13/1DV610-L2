@@ -21,7 +21,7 @@ class IndexController extends lab2\Controller {
             {
                 unset($_SESSION['USER::isLoggedIn']);
 
-                $loginView->setMessage('Bye bye!');
+                $_SESSION['message'] = 'Bye bye!';
             }
             else if (isset($_POST['LoginView::Login']) && !$this->userModel->isLoggedIn())
             {
@@ -32,23 +32,23 @@ class IndexController extends lab2\Controller {
     
                 if ($username == '')
                 {
-                    $loginView->setMessage('Username is missing');
+                    $_SESSION['message'] = 'Username is missing';
                 }
                 else if ($password == '')
                 {
-                    $loginView->setMessage('Password is missing');
+                    $_SESSION['message'] = 'Password is missing';
                 }
                 else
                 {
                     if ($username == $this->userModel->getUsername() && $password == $this->userModel->getPassword())
                     {
                         $_SESSION['USER::isLoggedIn'] = true;
-    
-                        $loginView->setMessage('Welcome');
+
+                        $_SESSION['message'] = 'Welcome';
                     }
                     else
                     {
-                        $loginView->setMessage('Wrong name or password');
+                        $_SESSION['message'] = 'Wrong name or password';
                     }
                 }
             }
@@ -65,7 +65,30 @@ class IndexController extends lab2\Controller {
     public function registerAction() {
         $registerView = new RegisterView();
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST')
+        {
+            if (isset($_POST['RegisterView::Register']))
+            {
+                $username = $_POST['RegisterView::UserName'];
+                $password = $_POST['RegisterView::Password'];
+                $passwordRepeat = $_POST['RegisterView::PasswordRepeat'];
+
+                if (strlen($username) < 3)
+                {
+                    $_SESSION['message'] = 'Username has too few characters, at least 3 characters.';
+                }
+                else if (strlen($password) < 6)
+                {
+                    $_SESSION['message'] = 'Password has too few characters, at least 6 characters.';
+                }
+            }
+            
+            return header("Location: " . $_SERVER['REQUEST_URI']);
+        }
+
         $this->services['view']->setOutput($this->layoutView->render($registerView));
+
+        unset($_SESSION['message']);
     }
 
 }

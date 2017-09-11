@@ -32,10 +32,6 @@ class LoginView {
 		return $this->generateLoginFormHTML();
 	}
 
-	public function setMessage($message) {
-		$_SESSION['message'] = $message;
-	}
-
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message

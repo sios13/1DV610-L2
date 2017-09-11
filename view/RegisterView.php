@@ -10,10 +10,10 @@ class RegisterView {
 	public function response() {
         return '
             <h2>Register new user</h2>
-            <form action="register" method="post">
+            <form action="?register" method="post">
                 <fieldset>
                     <legend>Register a new user - Write username and password</legend>
-                    <p id="' . self::$messageId . '"></p>
+                    <p id="' . self::$messageId . '">' . $this->getMessage() . '</p>
                     <label for="' . self::$name . '">Username :</label>
                     <input type="text" size="20" name="' . self::$name . '" id="' . self::$name . '" value="" />
                     <br/>
@@ -28,5 +28,13 @@ class RegisterView {
                 </fieldset>
             </form>
         ';
+    }
+    
+    private function getMessage() {
+        if (isset($_SESSION['message'])) {
+            return $_SESSION['message'];
+        }
+
+        return '';
     }
 }
