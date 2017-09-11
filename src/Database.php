@@ -2,12 +2,12 @@
 
 namespace lab2;
 
-abstract class Controller {
+class Database {
 
-    protected $services;
+    private $services;
 
     function __construct() {}
-
+        
     public function addServices($services) {
         $this->services = $services;
     }

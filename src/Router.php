@@ -4,7 +4,7 @@ namespace lab2;
 
 class Router {
 
-    private $service;
+    private $services;
 
     private $routes;
 
@@ -12,8 +12,8 @@ class Router {
         $this->routes = array();
     }
 
-    public function addService(Service $service) {
-        $this->service = $service;
+    public function addServices($services) {
+        $this->services = $services;
     }
 
     public function addRoute($path, $controller, $action) {
@@ -25,7 +25,7 @@ class Router {
     }
 
     public function route() {
-        $request_path = '/' . join('/', array_keys($_GET));
+        $request_path = $this->getRequestPath();
 
         foreach($this->routes as $route)
         {
@@ -33,6 +33,7 @@ class Router {
             if ($route['path'] == $request_path)
             {
                 $controller = new $route['controller'];
+                $controller->addServices($this->services);
 
                 if (method_exists($controller, 'initialize'))
                 {
@@ -42,6 +43,10 @@ class Router {
                 $controller->{$route['action']}();
             }
         }
+    }
+
+    private function getRequestPath() {
+        return '/' . join('/', array_keys($_GET));
     }
 
 }

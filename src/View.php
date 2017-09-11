@@ -3,19 +3,23 @@
 namespace lab2;
 
 class View {
+
+    private $services;
+
+    private $output;
     
     function __construct() {}
-    
-    public function setLayout($layoutName) {
 
+    public function addServices($services) {
+        $this->services = $services;
+    }
+        
+    public function setOutput($output) {
+        $this->output = $output;
     }
 
-    public function pick($viewName) {
-        echo $viewName;
-    }
-
-    public function render() {
-
+    public function getOutput() {
+        return $this->output;
     }
 
 }
