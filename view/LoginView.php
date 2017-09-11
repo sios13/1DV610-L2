@@ -12,12 +12,8 @@ class LoginView {
 
 	private $userModel;
 
-	// private $message;
-
 	public function __construct($userModel) {
 		$this->userModel = $userModel;
-
-		// $this->message = '';
 	}
 
 	/**
@@ -37,7 +33,6 @@ class LoginView {
 	}
 
 	public function setMessage($message) {
-		// $this->message = $message;
 		$_SESSION['message'] = $message;
 	}
 
@@ -89,10 +84,8 @@ class LoginView {
 
 		return '';
 	}
-	
-	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
+
 	private function getRequestUserName() {
-		//RETURN REQUEST VARIABLE: USERNAME
 		if (isset($_SESSION['USER::username'])) {
 			return $_SESSION['USER::username'];
 		}

@@ -10,7 +10,6 @@ class RegisterView {
 	public function response() {
         return '
             <h2>Register new user</h2>
-            <a href="/">Go back</a>
             <form action="register" method="post">
                 <fieldset>
                     <legend>Register a new user - Write username and password</legend>

@@ -65,7 +65,7 @@ class IndexController extends lab2\Controller {
     public function registerAction() {
         $registerView = new RegisterView();
 
-        $this->view->setOutput($this->layoutView->render(isset($_SESSION['user']), $registerView));
+        $this->services['view']->setOutput($this->layoutView->render($registerView));
     }
 
 }
