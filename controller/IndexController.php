@@ -23,7 +23,7 @@ class IndexController extends lab2\Controller {
 
                 $loginView->setMessage('Bye bye!');
             }
-            else
+            else if (isset($_POST['LoginView::Login']))
             {
                 $username = $_POST['LoginView::UserName'];
                 $password = $_POST['LoginView::Password'];
