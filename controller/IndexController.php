@@ -90,8 +90,14 @@ class IndexController extends lab2\Controller {
                 {
                     $_SESSION['message'] .= 'Passwords do not match.';
                 }
+
+                if ($username != strip_tags($username))
+                {
+                    $_SESSION['message'] = 'Username contains invalid characters.';
+                    $_SESSION['USER::username'] = strip_tags($username);
+                }
             }
-            
+
             return header("Location: " . $_SERVER['REQUEST_URI']);
         }
 
