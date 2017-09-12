@@ -29,6 +29,10 @@ class UserModel extends lab2\Model {
 
                 $_SESSION['USER::isLoggedIn'] = true;
             }
+            else
+            {
+                $_SESSION['message'] = 'Wrong information in cookies';
+            }
         }
     }
 
