@@ -11,7 +11,9 @@ class UserModel extends lab2\Model {
     }
 
     public function isLoggedIn() {
-        $this->attemptCookieLogin();
+        if (!isset($_SESSION['USER::isLoggedin'])) {
+            $this->attemptCookieLogin();
+        }
 
         return isset($_SESSION['USER::isLoggedIn']);
     }
