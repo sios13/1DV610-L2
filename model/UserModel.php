@@ -11,9 +11,7 @@ class UserModel extends lab2\Model {
     }
 
     public function isLoggedIn() {
-        if (!isset($_SESSION['USER::isLoggedin'])) {
-            $this->attemptCookieLogin();
-        }
+        $this->attemptCookieLogin();
 
         return isset($_SESSION['USER::isLoggedIn']);
     }
@@ -24,9 +22,12 @@ class UserModel extends lab2\Model {
             if ($this->getUsername() == $_COOKIE['LoginView::CookieName']
                 && $this->getPassword() == $_COOKIE['LoginView::CookiePassword'])
             {
-                $_SESSION['USER::isLoggedIn'] = true;
+                if (!isset($_SESSION['USER::isLoggedIn']))
+                {
+                    $_SESSION['message'] = 'Welcome back with cookie';
+                }
 
-                $_SESSION['message'] = 'Welcome back with cookie';
+                $_SESSION['USER::isLoggedIn'] = true;
             }
         }
     }
