@@ -21,6 +21,9 @@ class IndexController extends lab2\Controller {
             {
                 unset($_SESSION['USER::isLoggedIn']);
 
+                setcookie('LoginView::CookieName', '', time() - 3600);
+                setcookie('LoginView::CookiePassword', '', time() - 3600);
+
                 $_SESSION['message'] = 'Bye bye!';
             }
             else if (isset($_POST['LoginView::Login']) && !$this->userModel->isLoggedIn())
@@ -45,6 +48,12 @@ class IndexController extends lab2\Controller {
                         $_SESSION['USER::isLoggedIn'] = true;
 
                         $_SESSION['message'] = 'Welcome';
+
+                        if (isset($_POST['LoginView::KeepMeLoggedIn']))
+                        {
+                            setcookie('LoginView::CookieName', $this->userModel->getUsername(), time() + 3600);
+                            setcookie('LoginView::CookiePassword', $this->userModel->getPassword(), time() + 3600);
+                        }
                     }
                     else
                     {
