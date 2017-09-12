@@ -23,6 +23,8 @@ class UserModel extends lab2\Model {
                 && $this->getPassword() == $_COOKIE['LoginView::CookiePassword'])
             {
                 $_SESSION['USER::isLoggedIn'] = true;
+
+                $_SESSION['message'] = 'Welcome back with cookie';
             }
         }
     }
