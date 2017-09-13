@@ -15,12 +15,17 @@ class UserModel extends lab2\Model {
         }
     }
 
-    private function isAuthenticatedWithDb($username, $password) {
-        $query = 'SELECT * FROM users WHERE name="' . $username . '" AND password="' . $password . '" LIMIT 1';
+    private function isAuthenticatedWithDb() {
+        $query = 'SELECT * FROM users WHERE name="' . $this->username . '" LIMIT 1';
 
         $rows = $this->services['database']->query($query);
 
-        return count($rows) == 1;
+        if ($rows[0]['password'] == $this->password)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public function setUsername($username) {
@@ -52,14 +57,14 @@ class UserModel extends lab2\Model {
     }
 
     public function attemptLogin() {
-        if ($this->isAuthenticatedWithDb($this->username, $this->password))
+        if ($this->isAuthenticatedWithDb())
         {
             $_SESSION['User::IsLoggedIn'] = true;
 
             if (isset($_POST['LoginView::KeepMeLoggedIn']))
             {
-                setcookie('LoginView::CookieName', $this->getUsername(), time() + 3600);
-                setcookie('LoginView::CookiePassword', $this->getPassword(), time() + 3600);
+                setcookie('LoginView::CookieName', $this->username, time() + 3600);
+                setcookie('LoginView::CookiePassword', $this->password, time() + 3600);
             }
 
             return true;
