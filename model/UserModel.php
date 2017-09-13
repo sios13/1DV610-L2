@@ -3,11 +3,33 @@
 class UserModel extends lab2\Model {
 
     public function getUsername() {
-        return 'Admin';
+        $usernameFromPost = $_POST['LoginView::UserName'];
+
+        $query = 'SELECT * FROM users WHERE name="' . $usernameFromPost . '" LIMIT 1';
+
+        $rows = $this->services['database']->query($query);
+
+        if (count($rows) == 1)
+        {
+            return $rows[0]['name'];
+        }
+
+        return '';
     }
 
     public function getPassword() {
-        return 'Password';
+        $usernameFromPost = $_POST['LoginView::UserName'];
+
+        $query = 'SELECT * FROM users WHERE name="' . $usernameFromPost . '" LIMIT 1';
+
+        $rows = $this->services['database']->query($query);
+
+        if (count($rows) == 1)
+        {
+            return $rows[0]['password'];
+        }
+
+        return '';
     }
 
     public function isLoggedIn() {

@@ -4,7 +4,7 @@ namespace lab2;
 
 class Model {
 
-    private $services;
+    protected $services;
 
     public function __construct($services) {
         $this->services = $services;
