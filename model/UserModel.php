@@ -2,60 +2,83 @@
 
 class UserModel extends lab2\Model {
 
-    public function getUsername() {
-        $usernameFromPost = $_POST['LoginView::UserName'];
+    private $username;
 
-        $query = 'SELECT * FROM users WHERE name="' . $usernameFromPost . '" LIMIT 1';
+    private $password;
+
+    public function __construct($services) {
+        parent::__construct($services);
+
+        if ($this->isLoggedIn() == false)
+        {
+            $this->attemptCookieLogin();
+        }
+    }
+
+    private function isAuthenticatedWithDb($username, $password) {
+        $query = 'SELECT * FROM users WHERE name="' . $username . '" AND password="' . $password . '" LIMIT 1';
 
         $rows = $this->services['database']->query($query);
 
-        if (count($rows) == 1)
-        {
-            return $rows[0]['name'];
-        }
+        return count($rows) == 1;
+    }
 
-        return '';
+    public function setUsername($username) {
+        $this->username = $username;
+    }
+
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+
+    public function getUsername() {
+        return $this->username;
     }
 
     public function getPassword() {
-        $usernameFromPost = $_POST['LoginView::UserName'];
+        return $this->password;
+    }
 
-        $query = 'SELECT * FROM users WHERE name="' . $usernameFromPost . '" LIMIT 1';
-
-        $rows = $this->services['database']->query($query);
-
-        if (count($rows) == 1)
+    public function attemptCookieLogin() {
+        if (isset($_COOKIE['LoginView::CookieName']) && isset($_COOKIE['LoginView::CookiePassword']))
         {
-            return $rows[0]['password'];
+            $this->username = $_COOKIE['LoginView::CookieName'];
+            $this->password = $_COOKIE['LoginView::CookiePassword'];
+
+            if ($this->attemptLogin()) {
+                $_SESSION['message'] = "Welcome back from cookie";
+            }
+        }
+    }
+
+    public function attemptLogin() {
+        if ($this->isAuthenticatedWithDb($this->username, $this->password))
+        {
+            $_SESSION['User::IsLoggedIn'] = true;
+
+            if (isset($_POST['LoginView::KeepMeLoggedIn']))
+            {
+                setcookie('LoginView::CookieName', $this->getUsername(), time() + 3600);
+                setcookie('LoginView::CookiePassword', $this->getPassword(), time() + 3600);
+            }
+
+            return true;
         }
 
-        return '';
+        return false;
+    }
+
+    public function logout() {
+        unset($_SESSION['User::IsLoggedIn']);
+
+        setcookie('LoginView::CookieName', '', time() - 3600);
+        setcookie('LoginView::CookiePassword', '', time() - 3600);
+
+        $_SESSION['message'] = 'Bye bye!';
     }
 
     public function isLoggedIn() {
-        $this->attemptCookieLogin();
-
-        return isset($_SESSION['USER::isLoggedIn']);
-    }
-
-    private function attemptCookieLogin() {
-        if (isset($_COOKIE['LoginView::CookieName']) && isset($_COOKIE['LoginView::CookiePassword']))
-        {
-            if ($this->getUsername() == $_COOKIE['LoginView::CookieName']
-                && $this->getPassword() == $_COOKIE['LoginView::CookiePassword'])
-            {
-                if (!isset($_SESSION['USER::isLoggedIn']))
-                {
-                    $_SESSION['message'] = 'Welcome back with cookie';
-                }
-
-                $_SESSION['USER::isLoggedIn'] = true;
-            }
-            else
-            {
-                $_SESSION['message'] = 'Wrong information in cookies';
-            }
-        }
+        return isset($_SESSION['User::IsLoggedIn']);
     }
 
 }

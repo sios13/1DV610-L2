@@ -19,41 +19,31 @@ class IndexController extends lab2\Controller {
         {
             if (isset($_POST['LoginView::Logout']) && $this->userModel->isLoggedIn())
             {
-                unset($_SESSION['USER::isLoggedIn']);
-
-                setcookie('LoginView::CookieName', '', time() - 3600);
-                setcookie('LoginView::CookiePassword', '', time() - 3600);
-
-                $_SESSION['message'] = 'Bye bye!';
+                $this->userModel->logout();
             }
-            else if (isset($_POST['LoginView::Login']) && !$this->userModel->isLoggedIn())
+            else if (isset($_POST['LoginView::Login']) && $this->userModel->isLoggedIn() == false)
             {
-                $username = $_POST['LoginView::UserName'];
-                $password = $_POST['LoginView::Password'];
+                $postUsername = $_POST['LoginView::UserName'];
+                $postPassword = $_POST['LoginView::Password'];
 
-                $_SESSION['USER::username'] = $username;
-    
-                if ($username == '')
+                $_SESSION['UsernameInput'] = $postUsername;
+
+                if ($postUsername == '')
                 {
                     $_SESSION['message'] = 'Username is missing';
                 }
-                else if ($password == '')
+                else if ($postPassword == '')
                 {
                     $_SESSION['message'] = 'Password is missing';
                 }
                 else
                 {
-                    if ($username == $this->userModel->getUsername() && $password == $this->userModel->getPassword())
+                    $this->userModel->setUsername($postUsername);
+                    $this->userModel->setPassword($postPassword);
+
+                    if ($this->userModel->attemptLogin())
                     {
-                        $_SESSION['USER::isLoggedIn'] = true;
-
                         $_SESSION['message'] = 'Welcome';
-
-                        if (isset($_POST['LoginView::KeepMeLoggedIn']))
-                        {
-                            setcookie('LoginView::CookieName', $this->userModel->getUsername(), time() + 3600);
-                            setcookie('LoginView::CookiePassword', $this->userModel->getPassword(), time() + 3600);
-                        }
                     }
                     else
                     {
@@ -68,7 +58,7 @@ class IndexController extends lab2\Controller {
         $this->services['view']->setOutput($this->layoutView->render($loginView));
 
         unset($_SESSION['message']);
-        unset($_SESSION['USER::username']);
+        unset($_SESSION['UsernameInput']);
     }
 
     public function registerAction() {
@@ -113,7 +103,7 @@ class IndexController extends lab2\Controller {
         $this->services['view']->setOutput($this->layoutView->render($registerView));
 
         unset($_SESSION['message']);
-        unset($_SESSION['USER::username']);
+        unset($_SESSION['UsernameInput']);
     }
 
 }
