@@ -18,9 +18,9 @@ class UserModel extends lab2\Model {
     private function isAuthenticatedWithDb() {
         $query = 'SELECT * FROM users WHERE name="' . $this->username . '" LIMIT 1';
 
-        $rows = $this->services['database']->query($query);
+        $rows = $this->services['database']->fetchAll($query);
 
-        if ($rows[0]['password'] == $this->password)
+        if (count($rows) == 1 && $rows[0]['password'] == $this->password)
         {
             return true;
         }
@@ -29,30 +29,11 @@ class UserModel extends lab2\Model {
     }
 
     public function setUsername($username) {
-        if (strlen($username) < 3)
-        {
-            $_SESSION['message'] .= 'Username has too few characters, at least 3 characters.';
-        }
-        else if ($username != strip_tags($username))
-        {
-            $_SESSION['message'] .= 'Username contains invalid characters.';
-            $_SESSION['UsernameInput'] = strip_tags($username);
-        }
-        else
-        {
-            $this->username = $username;
-        }
+        $this->username = $username;
     }
 
     public function setPassword($password) {
-        if (strlen($password) < 6)
-        {
-            $_SESSION['message'] .= 'Password has too few characters, at least 6 characters.';
-        }
-        else
-        {
-            $this->password = $password;
-        }
+        $this->password = $password;
     }
 
     public function getUsername() {
@@ -84,7 +65,7 @@ class UserModel extends lab2\Model {
     public function attemptLogin() {
         if ($this->isAuthenticatedWithDb())
         {
-            $_SESSION['User::IsLoggedIn'] = true;
+            $_SESSION['User::IsLoggedIn'] = $this->username;
 
             if (isset($_POST['LoginView::KeepMeLoggedIn']))
             {
@@ -99,16 +80,73 @@ class UserModel extends lab2\Model {
     }
 
     public function logout() {
-        unset($_SESSION['User::IsLoggedIn']);
+        if ($this->isLoggedIn())
+        {
+            unset($_SESSION['User::IsLoggedIn']);
 
-        setcookie('LoginView::CookieName', '', time() - 3600);
-        setcookie('LoginView::CookiePassword', '', time() - 3600);
+            setcookie('LoginView::CookieName', '', time() - 3600);
+            setcookie('LoginView::CookiePassword', '', time() - 3600);
 
-        $_SESSION['message'] .= 'Bye bye!';
+            $_SESSION['message'] .= 'Bye bye!';
+        }
     }
 
     public function isLoggedIn() {
         return isset($_SESSION['User::IsLoggedIn']);
+    }
+
+    public function register() {
+        if ($this->canRegister())
+        {
+            $query = 'INSERT INTO users (name, password) VALUES ("' . $this->username . '", "' . $this->password . '");';
+
+            if ($this->services['database']->insert($query))
+            {
+                $this->addMessage('Success!');
+            }
+            else
+            {
+                $this->addMessage($query);
+            }
+        }
+    }
+
+    private function canRegister() {
+        $canRegister = true;
+
+        if (strlen($this->username) < 3)
+        {
+            $this->addMessage('Username has too few characters, at least 3 characters.');
+
+            $canRegister = false;
+        }
+
+        if ($this->username != strip_tags($this->username))
+        {
+            $this->addMessage('Username contains invalid characters.');
+
+            $_SESSION['UsernameInput'] = strip_tags($username);
+
+            $canRegister = false;
+        }
+
+        if (strlen($this->password) < 6)
+        {
+            $this->addMessage('Password has too few characters, at least 6 characters.');
+            
+            $canRegister = false;
+        }
+
+        return $canRegister;
+    }
+
+    private function addMessage($message) {
+        if (isset($_SESSION['messages']) == false)
+        {
+            $_SESSION['messages'] = '';
+        }
+
+        $_SESSION['messages'] .= $message . '<br>';
     }
 
 }

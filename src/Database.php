@@ -11,20 +11,20 @@ class Database {
     function __construct() {
         $dir = 'sqlite:db.db';
         $this->dbh  = new \PDO($dir) or die("cannot open the database");
-
-        // $query =  'SELECT * FROM users';
-        // foreach ($dbh->query($query) as $row)
-        // {
-        //     echo $row[0] . $row[1];
-        // }
     }
         
     public function addServices($services) {
         $this->services = $services;
     }
 
-    public function query($query) {
+    public function fetchAll($query) {
         return $this->dbh->query($query)->fetchAll();
+    }
+
+    public function insert($query) {
+        $statement = $this->dbh->prepare($query);
+
+        return $statement->execute(array());
     }
 
 }

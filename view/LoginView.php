@@ -40,12 +40,12 @@ class LoginView {
 	private function generateLogoutButtonHTML() {
 		return '
 			<form  method="post" >
-				<p id="' . self::$messageId . '">' . $this->getMessage() . '</p>
+				<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
 	}
-	
+
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message
@@ -56,7 +56,7 @@ class LoginView {
 			<form method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $this->getMessage() . '</p>
+					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
 					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
@@ -73,16 +73,18 @@ class LoginView {
 		';
 	}
 
-	private function getMessage() {
-		if (isset($_SESSION['message'])) {
-			return $_SESSION['message'];
+	private function getMessages() {
+		if (isset($_SESSION['messages']))
+		{
+			return $_SESSION['messages'];
 		}
 
 		return '';
 	}
 
 	private function getRequestUserName() {
-		if (isset($_SESSION['UsernameInput'])) {
+		if (isset($_SESSION['UsernameInput']))
+		{
 			return $_SESSION['UsernameInput'];
 		}
 

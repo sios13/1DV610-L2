@@ -12,16 +12,25 @@ class IndexController extends lab2\Controller {
         $this->layoutView = new LayoutView($this->userModel);
     }
 
+    private function addMessage($message) {
+        if (isset($_SESSION['messages']) == false)
+        {
+            $_SESSION['messages'] = '';
+        }
+
+        $_SESSION['messages'] .= $message . '<br>';
+    }
+
     public function indexAction() {
         $loginView = new LoginView($this->userModel);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
-            if (isset($_POST['LoginView::Logout']) && $this->userModel->isLoggedIn())
+            if (isset($_POST['LoginView::Logout']))
             {
                 $this->userModel->logout();
             }
-            else if (isset($_POST['LoginView::Login']) && $this->userModel->isLoggedIn() == false)
+            else if (isset($_POST['LoginView::Login']))
             {
                 $postUsername = $_POST['LoginView::UserName'];
                 $postPassword = $_POST['LoginView::Password'];
@@ -30,11 +39,11 @@ class IndexController extends lab2\Controller {
 
                 if ($postUsername == '')
                 {
-                    $_SESSION['message'] .= 'Username is missing';
+                    $this->addMessage('Username is missing');
                 }
                 else if ($postPassword == '')
                 {
-                    $_SESSION['message'] .= 'Password is missing';
+                    $this->addMessage('Password is missing');
                 }
                 else
                 {
@@ -43,11 +52,11 @@ class IndexController extends lab2\Controller {
 
                     if ($this->userModel->attemptLogin())
                     {
-                        $_SESSION['message'] .= 'Welcome';
+                        $this->addMessage('Welcome');
                     }
                     else
                     {
-                        $_SESSION['message'] .= 'Wrong name or password';
+                        $this->addMessage('Wrong name or password');
                     }
                 }
             }
@@ -57,7 +66,7 @@ class IndexController extends lab2\Controller {
 
         $this->services['view']->setOutput($this->layoutView->render($loginView));
 
-        unset($_SESSION['message']);
+        unset($_SESSION['messages']);
         unset($_SESSION['UsernameInput']);
     }
 
@@ -72,15 +81,18 @@ class IndexController extends lab2\Controller {
                 $password = $_POST['RegisterView::Password'];
                 $passwordRepeat = $_POST['RegisterView::PasswordRepeat'];
 
+                $this->userModel->setUsername($username);
+                $this->userModel->setPassword($password);
+
                 $_SESSION['UsernameInput'] = $username;
 
                 if ($password !== $passwordRepeat)
                 {
-                    $_SESSION['message'] .= 'Passwords do not match.';
+                    $this->addMessage('Passwords do not match.');
                 }
-
-                if ($canRegister) {
-                    $userModel->register();
+                else if ($this->userModel->register())
+                {
+                    $this->addMessage('Success!');
                 }
             }
 
@@ -89,7 +101,7 @@ class IndexController extends lab2\Controller {
 
         $this->services['view']->setOutput($this->layoutView->render($registerView));
 
-        unset($_SESSION['message']);
+        unset($_SESSION['messages']);
         unset($_SESSION['UsernameInput']);
     }
 

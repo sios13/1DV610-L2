@@ -13,7 +13,7 @@ class RegisterView {
             <form action="?register" method="post">
                 <fieldset>
                     <legend>Register a new user - Write username and password</legend>
-                    <p id="' . self::$messageId . '">' . $this->getMessage() . '</p>
+                    <p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
                     <label for="' . self::$name . '">Username :</label>
                     <input type="text" size="20" name="' . self::$name . '" id="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
                     <br/>
@@ -29,17 +29,19 @@ class RegisterView {
             </form>
         ';
     }
-    
-    private function getMessage() {
-        if (isset($_SESSION['message'])) {
-            return $_SESSION['message'];
+
+    private function getMessages() {
+        if (isset($_SESSION['messages']))
+        {
+            return $_SESSION['messages'];
         }
 
         return '';
     }
 
     private function getRequestUserName() {
-        if (isset($_SESSION['UsernameInput'])) {
+        if (isset($_SESSION['UsernameInput']))
+        {
             return $_SESSION['UsernameInput'];
         }
 
