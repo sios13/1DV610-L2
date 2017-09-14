@@ -51,11 +51,11 @@ class UserModel extends lab2\Model {
             $this->password = $_COOKIE['LoginView::CookiePassword'];
 
             if ($this->attemptLogin()) {
-                $_SESSION['message'] .= 'Welcome back with cookie';
+                $this->addMessage('Welcome back with cookie');
             }
             else
             {
-                $_SESSION['message'] .= 'Wrong information in cookies';
+                $this->addMessage('Wrong information in cookies');
 
                 $this->logout();
             }
