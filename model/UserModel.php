@@ -63,11 +63,6 @@ class UserModel extends lab2\Model {
     }
 
     public function attemptLogin() {
-        if ($this->isLoggedIn())
-        {
-            return true;
-        }
-
         if ($this->isAuthenticatedWithDb())
         {
             $_SESSION['User::IsLoggedIn'] = $this->username;

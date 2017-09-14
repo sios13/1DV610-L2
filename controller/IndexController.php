@@ -50,14 +50,19 @@ class IndexController extends lab2\Controller {
                     $this->userModel->setUsername($postUsername);
                     $this->userModel->setPassword($postPassword);
 
-                    if ($this->userModel->attemptLogin())
+                    // Only login if not already logged in
+                    if ($this->userModel->isLoggedIn() == false)
                     {
-                        $this->addMessage('Welcome');
+                        if ($this->userModel->attemptLogin())
+                        {
+                            $this->addMessage('Welcome');
+                        }
+                        else
+                        {
+                            $this->addMessage('Wrong name or password');
+                        }
                     }
-                    else
-                    {
-                        $this->addMessage('Wrong name or password');
-                    }
+
                 }
             }
 
