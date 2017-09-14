@@ -30,11 +30,11 @@ class IndexController extends lab2\Controller {
 
                 if ($postUsername == '')
                 {
-                    $_SESSION['message'] = 'Username is missing';
+                    $_SESSION['message'] .= 'Username is missing';
                 }
                 else if ($postPassword == '')
                 {
-                    $_SESSION['message'] = 'Password is missing';
+                    $_SESSION['message'] .= 'Password is missing';
                 }
                 else
                 {
@@ -43,11 +43,11 @@ class IndexController extends lab2\Controller {
 
                     if ($this->userModel->attemptLogin())
                     {
-                        $_SESSION['message'] = 'Welcome';
+                        $_SESSION['message'] .= 'Welcome';
                     }
                     else
                     {
-                        $_SESSION['message'] = 'Wrong name or password';
+                        $_SESSION['message'] .= 'Wrong name or password';
                     }
                 }
             }
@@ -71,29 +71,16 @@ class IndexController extends lab2\Controller {
                 $username = $_POST['RegisterView::UserName'];
                 $password = $_POST['RegisterView::Password'];
                 $passwordRepeat = $_POST['RegisterView::PasswordRepeat'];
-                
-                $_SESSION['message'] = '';
-                $_SESSION['USER::username'] = $username;
 
-                if (strlen($username) < 3)
-                {
-                    $_SESSION['message'] .= 'Username has too few characters, at least 3 characters.';
-                }
-
-                if (strlen($password) < 6)
-                {
-                    $_SESSION['message'] .= 'Password has too few characters, at least 6 characters.';
-                }
+                $_SESSION['UsernameInput'] = $username;
 
                 if ($password !== $passwordRepeat)
                 {
                     $_SESSION['message'] .= 'Passwords do not match.';
                 }
 
-                if ($username != strip_tags($username))
-                {
-                    $_SESSION['message'] = 'Username contains invalid characters.';
-                    $_SESSION['USER::username'] = strip_tags($username);
+                if ($canRegister) {
+                    $userModel->register();
                 }
             }
 

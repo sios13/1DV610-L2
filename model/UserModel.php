@@ -29,11 +29,30 @@ class UserModel extends lab2\Model {
     }
 
     public function setUsername($username) {
-        $this->username = $username;
+        if (strlen($username) < 3)
+        {
+            $_SESSION['message'] .= 'Username has too few characters, at least 3 characters.';
+        }
+        else if ($username != strip_tags($username))
+        {
+            $_SESSION['message'] .= 'Username contains invalid characters.';
+            $_SESSION['UsernameInput'] = strip_tags($username);
+        }
+        else
+        {
+            $this->username = $username;
+        }
     }
 
     public function setPassword($password) {
-        $this->password = $password;
+        if (strlen($password) < 6)
+        {
+            $_SESSION['message'] .= 'Password has too few characters, at least 6 characters.';
+        }
+        else
+        {
+            $this->password = $password;
+        }
     }
 
     public function getUsername() {
@@ -51,11 +70,13 @@ class UserModel extends lab2\Model {
             $this->password = $_COOKIE['LoginView::CookiePassword'];
 
             if ($this->attemptLogin()) {
-                $_SESSION['message'] = 'Welcome back with cookie';
+                $_SESSION['message'] .= 'Welcome back with cookie';
             }
             else
             {
-                $_SESSION['message'] = 'Wrong information in cookies';
+                $_SESSION['message'] .= 'Wrong information in cookies';
+
+                $this->logout();
             }
         }
     }
@@ -83,7 +104,7 @@ class UserModel extends lab2\Model {
         setcookie('LoginView::CookieName', '', time() - 3600);
         setcookie('LoginView::CookiePassword', '', time() - 3600);
 
-        $_SESSION['message'] = 'Bye bye!';
+        $_SESSION['message'] .= 'Bye bye!';
     }
 
     public function isLoggedIn() {

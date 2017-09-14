@@ -39,8 +39,8 @@ class RegisterView {
     }
 
     private function getRequestUserName() {
-        if (isset($_SESSION['USER::username'])) {
-            return $_SESSION['USER::username'];
+        if (isset($_SESSION['UsernameInput'])) {
+            return $_SESSION['UsernameInput'];
         }
 
         return '';
