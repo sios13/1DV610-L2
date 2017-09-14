@@ -89,7 +89,7 @@ class IndexController extends lab2\Controller {
                 $this->userModel->setUsername($username);
                 $this->userModel->setPassword($password);
 
-                $_SESSION['UsernameInput'] = $username;
+                $_SESSION['UsernameInput'] = strip_tags($username);
 
                 if ($password !== $passwordRepeat)
                 {

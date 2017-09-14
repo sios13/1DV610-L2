@@ -125,8 +125,6 @@ class UserModel extends lab2\Model {
         {
             $this->addMessage('Username contains invalid characters.');
 
-            $_SESSION['UsernameInput'] = strip_tags($username);
-
             $canRegister = false;
         }
 
