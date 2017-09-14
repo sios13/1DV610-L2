@@ -87,7 +87,7 @@ class UserModel extends lab2\Model {
             setcookie('LoginView::CookieName', '', time() - 3600);
             setcookie('LoginView::CookiePassword', '', time() - 3600);
 
-            $_SESSION['message'] .= 'Bye bye!';
+            $this->addMessage('Bye bye!');
         }
     }
 
