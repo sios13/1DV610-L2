@@ -4,34 +4,45 @@ namespace lab2;
 
 class Application {
 
-    private $services;
+    private $routes;
 
     public function __construct() {
         session_start();
 
-        $this->services = [];
+        $this->routes = [];
     }
 
-    public function createService($serviceName, $callable) {
-        $this->services[$serviceName] = $callable();
+    public function addRoute($path, $controller, $action) {
+        $this->routes[] = [
+            'path' => $path,
+            'controller' => $controller,
+            'action' => $action
+        ];
     }
 
-    public function getService($serviceName) {
-        return $this->services[$serviceName];
-    }
+    public function handleRequest() {
+        $request_path = $this->getRequestPath();
 
-    public function handle() {
-        $this->addDependenciesToServices();
+        foreach ($this->routes as $route)
+        {
+            // Looking for a route with the requested url path
+            if ($route['path'] == $request_path)
+            {
+                $controller = new $route['controller'];
 
-        $router = $this->services['router'];
+                if (method_exists($controller, 'initialize'))
+                {
+                    $controller->initialize();
+                }
 
-        $router->route();
-    }
-
-    private function addDependenciesToServices() {
-        foreach($this->services as $service) {
-            $service->addServices($this->services);
+                // Run the controller-action
+                $controller->{$route['action']}();
+            }
         }
+    }
+
+    private function getRequestPath() {
+        return '/' . join('/', array_keys($_GET));
     }
 
 }

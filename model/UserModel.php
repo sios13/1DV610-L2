@@ -1,6 +1,6 @@
 <?php
 
-class UserModel extends lab2\Model {
+class UserModel {
 
     private $username;
 
@@ -8,9 +8,7 @@ class UserModel extends lab2\Model {
 
     private $messages;
 
-    public function __construct($services) {
-        parent::__construct($services);
-
+    public function __construct() {
         $this->username = null;
 
         $this->password = null;
@@ -21,7 +19,7 @@ class UserModel extends lab2\Model {
     private function isAuthenticatedWithDb() {
         $query = 'SELECT * FROM users WHERE name="' . $this->username . '" LIMIT 1';
 
-        $rows = $this->services['database']->fetchAll($query);
+        $rows = $this->db->fetchAll($query);
 
         return count($rows) == 1 && $rows[0]['password'] == $this->password;
     }
@@ -84,12 +82,12 @@ class UserModel extends lab2\Model {
     public function login() {
         if ($this->username == null)
         {
-            $this->addMessage('Username is missing');
+            return $this->addMessage('Username is missing');
         }
 
         if ($this->password == null)
         {
-            $this->addMessage('Password is missing');
+            return $this->addMessage('Password is missing');
         }
 
         if ($this->isAuthenticatedWithDb())
@@ -123,7 +121,7 @@ class UserModel extends lab2\Model {
     }
 
     public function isLoggedIn() {
-        return isset($_SESSION['User::IsLoggedIn']);
+        return isset($_SESSION['User::IsLoggedIn']) && $_SESSION['User::IsLoggedIn'] == true;
     }
 
     public function register() {
@@ -133,7 +131,7 @@ class UserModel extends lab2\Model {
 
             if ($this->services['database']->insert($query))
             {
-                $this->messages[] = 'Success!';
+                $this->addMessage('Success!');
             }
             else
             {

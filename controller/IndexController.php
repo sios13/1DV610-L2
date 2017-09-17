@@ -1,13 +1,13 @@
 <?php
 
-class IndexController extends lab2\Controller {
+class IndexController {
 
     private $userModel;
 
     private $layoutView;
 
     public function initialize() {
-        $this->userModel = new UserModel($this->services);
+        $this->userModel = new UserModel();
 
         if ($this->userModel->isLoggedIn() == false)
         {
@@ -15,15 +15,6 @@ class IndexController extends lab2\Controller {
         }
 
         $this->layoutView = new LayoutView($this->userModel);
-    }
-
-    private function addMessage($message) {
-        if (isset($_SESSION['messages']) == false)
-        {
-            $_SESSION['messages'] = '';
-        }
-
-        $_SESSION['messages'] .= $message . '<br>';
     }
 
     public function indexAction() {
@@ -53,7 +44,7 @@ class IndexController extends lab2\Controller {
             exit();
         }
 
-        $this->services['view']->setOutput($this->layoutView->render($loginView));
+        $this->layoutView->render($loginView);
 
         unset($_SESSION['messages']);
         unset($_SESSION['UsernameInput']);
@@ -85,10 +76,11 @@ class IndexController extends lab2\Controller {
                 }
             }
 
-            return header("Location: " . $_SERVER['REQUEST_URI']);
+            header("Location: " . $_SERVER['REQUEST_URI']);
+            exit();
         }
 
-        $this->services['view']->setOutput($this->layoutView->render($registerView));
+        $this->layoutView->render($registerView);
 
         unset($_SESSION['messages']);
         unset($_SESSION['UsernameInput']);

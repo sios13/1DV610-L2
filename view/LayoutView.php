@@ -9,7 +9,7 @@ class LayoutView {
   }
 
   public function render($view) {
-    return '<!DOCTYPE html>
+    echo '<!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
