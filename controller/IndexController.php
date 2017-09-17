@@ -17,11 +17,25 @@ class IndexController {
         $this->layoutView = new LayoutView($this->userModel);
     }
 
+    private function requestIsPost() {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
+    }
+
+    private function redirect() {
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit();
+    }
+
+    private function resetSession() {
+        unset($_SESSION['messages']);
+        unset($_SESSION['UsernameInput']);
+    }
+
     public function indexAction() {
         $loginView = new LoginView($this->userModel);
 
         // if posting
-        if ($_SERVER['REQUEST_METHOD'] === 'POST')
+        if ($this->requestIsPost())
         {
             // if pressed the login button
             if (isset($_POST['LoginView::Logout']))
@@ -40,21 +54,21 @@ class IndexController {
                 $_SESSION['UsernameInput'] = $this->userModel->getUsername();
             }
 
-            header("Location: " . $_SERVER['REQUEST_URI']);
-            exit();
+            $this->redirect();
         }
 
         $this->layoutView->render($loginView);
 
-        unset($_SESSION['messages']);
-        unset($_SESSION['UsernameInput']);
+        $this->resetSession();
     }
 
     public function registerAction() {
         $registerView = new RegisterView($this->userModel);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST')
+        // if posting
+        if ($this->requestIsPost())
         {
+            // if pressed the register button
             if (isset($_POST['RegisterView::Register']))
             {
                 $username = $_POST['RegisterView::UserName'];
@@ -76,14 +90,12 @@ class IndexController {
                 }
             }
 
-            header("Location: " . $_SERVER['REQUEST_URI']);
-            exit();
+            $this->redirect();
         }
 
         $this->layoutView->render($registerView);
-
-        unset($_SESSION['messages']);
-        unset($_SESSION['UsernameInput']);
+        
+        $this->resetSession();
     }
 
 }
