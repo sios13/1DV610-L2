@@ -64,10 +64,10 @@ class UserModel {
             $this->username = $_COOKIE['LoginView::CookieName'];
             $this->password = $_COOKIE['LoginView::CookiePassword'];
 
-            $this->login(true);
-
-            if ($this->isLoggedIn())
+            if ($this->isAuthenticatedWithDb())
             {
+                $_SESSION['User::IsLoggedIn'] = true;
+
                 $this->addMessage('Welcome back with cookie');
             }
             else
@@ -79,7 +79,7 @@ class UserModel {
         }
     }
 
-    public function login($cookieLogin = false) {
+    public function login() {
         if ($this->username == null)
         {
             return $this->addMessage('Username is missing');
@@ -92,7 +92,7 @@ class UserModel {
 
         if ($this->isAuthenticatedWithDb())
         {
-            if ($this->isLoggedIn() == false && $cookieLogin == false)
+            if ($this->isLoggedIn() == false)
             {
                 $this->addMessage('Welcome');
             }
