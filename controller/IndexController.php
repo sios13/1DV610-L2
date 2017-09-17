@@ -31,16 +31,20 @@ class IndexController {
         unset($_SESSION['UsernameInput']);
     }
 
+    private function render($view) {
+        $this->layoutView->render($view);
+    }
+
     public function indexAction() {
         if ($this->requestIsPost())
         {
-            // if pressed the login button
+            // if pressed the logout button
             if (isset($_POST['LoginView::Logout']))
             {
                 $this->userModel->logout();
             }
 
-            // if pressed the logout button
+            // if pressed the login button
             else if (isset($_POST['LoginView::Login']))
             {
                 $this->userModel->setUsername($_POST['LoginView::UserName']);
@@ -54,9 +58,7 @@ class IndexController {
             $this->redirect();
         }
 
-        $loginView = new LoginView($this->userModel);
-
-        $this->layoutView->render($loginView);
+        $this->render(new LoginView($this->userModel));
 
         $this->resetSession();
     }
@@ -67,28 +69,19 @@ class IndexController {
             // if pressed the register button
             if (isset($_POST['RegisterView::Register']))
             {
-                $username = $_POST['RegisterView::UserName'];
-                $password = $_POST['RegisterView::Password'];
-                $passwordRepeat = $_POST['RegisterView::PasswordRepeat'];
+                $this->userModel->setUsername($_POST['RegisterView::UserName']);
+                $this->userModel->setPassword($_POST['RegisterView::Password']);
+                $this->userModel->setPasswordRepeat($_POST['RegisterView::PasswordRepeat']);
 
-                $this->userModel->setUsername($username);
-                $this->userModel->setPassword($password);
-                $this->userModel->setPasswordRepeat($passwordRepeat);
-
-                $_SESSION['UsernameInput'] = strip_tags($username);
-
-                if ($this->userModel->register())
-                {
-                    $this->addMessage('Success!');
-                }
+                $this->userModel->register();
+                
+                $_SESSION['UsernameInput'] = strip_tags($_POST['RegisterView::UserName']);
             }
 
             $this->redirect();
         }
 
-        $registerView = new RegisterView($this->userModel);
-
-        $this->layoutView->render($registerView);
+        $this->render(new RegisterView($this->userModel));
         
         $this->resetSession();
     }
