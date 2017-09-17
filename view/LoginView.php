@@ -40,7 +40,7 @@ class LoginView {
 	private function generateLogoutButtonHTML() {
 		return '
 			<form  method="post" >
-				<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
+				<p id="' . self::$messageId . '">' . $this->userModel->getMessages() . '</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
@@ -56,7 +56,7 @@ class LoginView {
 			<form method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
+					<p id="' . self::$messageId . '">' . $this->userModel->getMessages() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
 					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
@@ -73,14 +73,14 @@ class LoginView {
 		';
 	}
 
-	private function getMessages() {
-		if (isset($_SESSION['messages']))
-		{
-			return $_SESSION['messages'];
-		}
+	// private function getMessages() {
+	// 	if (isset($_SESSION['messages']))
+	// 	{
+	// 		return $_SESSION['messages'];
+	// 	}
 
-		return '';
-	}
+	// 	return '';
+	// }
 
 	private function getRequestUserName() {
 		if (isset($_SESSION['UsernameInput']))

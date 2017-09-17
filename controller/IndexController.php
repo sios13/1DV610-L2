@@ -9,6 +9,11 @@ class IndexController extends lab2\Controller {
     public function initialize() {
         $this->userModel = new UserModel($this->services);
 
+        if ($this->userModel->isLoggedIn() == false)
+        {
+            $this->userModel->attemptCookieLogin();
+        }
+
         $this->layoutView = new LayoutView($this->userModel);
     }
 
@@ -24,49 +29,28 @@ class IndexController extends lab2\Controller {
     public function indexAction() {
         $loginView = new LoginView($this->userModel);
 
+        // if posting
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
+            // if pressed the login button
             if (isset($_POST['LoginView::Logout']))
             {
                 $this->userModel->logout();
             }
+
+            // if pressed the logout button
             else if (isset($_POST['LoginView::Login']))
             {
-                $postUsername = $_POST['LoginView::UserName'];
-                $postPassword = $_POST['LoginView::Password'];
+                $this->userModel->setUsername($_POST['LoginView::UserName']);
+                $this->userModel->setPassword($_POST['LoginView::Password']);
 
-                $_SESSION['UsernameInput'] = $postUsername;
+                $this->userModel->login();
 
-                if ($postUsername == '')
-                {
-                    $this->addMessage('Username is missing');
-                }
-                else if ($postPassword == '')
-                {
-                    $this->addMessage('Password is missing');
-                }
-                else
-                {
-                    $this->userModel->setUsername($postUsername);
-                    $this->userModel->setPassword($postPassword);
-
-                    // Only login if not already logged in
-                    if ($this->userModel->isLoggedIn() == false)
-                    {
-                        if ($this->userModel->attemptLogin())
-                        {
-                            $this->addMessage('Welcome');
-                        }
-                        else
-                        {
-                            $this->addMessage('Wrong name or password');
-                        }
-                    }
-
-                }
+                $_SESSION['UsernameInput'] = $this->userModel->getUsername();
             }
 
-            return header("Location: " . $_SERVER['REQUEST_URI']);
+            header("Location: " . $_SERVER['REQUEST_URI']);
+            exit();
         }
 
         $this->services['view']->setOutput($this->layoutView->render($loginView));
@@ -76,7 +60,7 @@ class IndexController extends lab2\Controller {
     }
 
     public function registerAction() {
-        $registerView = new RegisterView();
+        $registerView = new RegisterView($this->userModel);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {

@@ -7,13 +7,19 @@ class RegisterView {
     private static $passwordRepeat = 'RegisterView::PasswordRepeat';
     private static $messageId = 'RegisterView::Message';
 
+    private $userModel;
+
+    public function __construct($userModel) {
+        $this->userModel = $userModel;
+    }
+
 	public function response() {
         return '
             <h2>Register new user</h2>
             <form action="?register" method="post">
                 <fieldset>
                     <legend>Register a new user - Write username and password</legend>
-                    <p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
+                    <p id="' . self::$messageId . '">' . $this->userModel->getMessages() . '</p>
                     <label for="' . self::$name . '">Username :</label>
                     <input type="text" size="20" name="' . self::$name . '" id="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
                     <br/>
@@ -28,15 +34,6 @@ class RegisterView {
                 </fieldset>
             </form>
         ';
-    }
-
-    private function getMessages() {
-        if (isset($_SESSION['messages']))
-        {
-            return $_SESSION['messages'];
-        }
-
-        return '';
     }
 
     private function getRequestUserName() {

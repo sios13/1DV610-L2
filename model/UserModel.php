@@ -6,13 +6,16 @@ class UserModel extends lab2\Model {
 
     private $password;
 
+    private $messages;
+
     public function __construct($services) {
         parent::__construct($services);
 
-        if ($this->isLoggedIn() == false)
-        {
-            $this->attemptCookieLogin();
-        }
+        $this->username = null;
+
+        $this->password = null;
+
+        $this->db = new lab2\Database();
     }
 
     private function isAuthenticatedWithDb() {
@@ -20,12 +23,16 @@ class UserModel extends lab2\Model {
 
         $rows = $this->services['database']->fetchAll($query);
 
-        if (count($rows) == 1 && $rows[0]['password'] == $this->password)
+        return count($rows) == 1 && $rows[0]['password'] == $this->password;
+    }
+
+    private function addMessage($message) {
+        if (isset($_SESSION['messages']) == false)
         {
-            return true;
+            $_SESSION['messages'] = array();
         }
 
-        return false;
+        $_SESSION['messages'][] = $message;
     }
 
     public function setUsername($username) {
@@ -44,13 +51,25 @@ class UserModel extends lab2\Model {
         return $this->password;
     }
 
+    public function getMessages() {
+        if (isset($_SESSION['messages']) == false)
+        {
+            return '';
+        }
+
+        return implode('<br>', $_SESSION['messages']);
+    }
+
     public function attemptCookieLogin() {
         if (isset($_COOKIE['LoginView::CookieName']) && isset($_COOKIE['LoginView::CookiePassword']))
         {
             $this->username = $_COOKIE['LoginView::CookieName'];
             $this->password = $_COOKIE['LoginView::CookiePassword'];
 
-            if ($this->attemptLogin()) {
+            $this->login();
+
+            if ($this->isLoggedIn())
+            {
                 $this->addMessage('Welcome back with cookie');
             }
             else
@@ -62,21 +81,33 @@ class UserModel extends lab2\Model {
         }
     }
 
-    public function attemptLogin() {
+    public function login() {
+        if ($this->username == null)
+        {
+            $this->addMessage('Username is missing');
+        }
+
+        if ($this->password == null)
+        {
+            $this->addMessage('Password is missing');
+        }
+
         if ($this->isAuthenticatedWithDb())
         {
-            $_SESSION['User::IsLoggedIn'] = $this->username;
+            $_SESSION['User::IsLoggedIn'] = true;
+
+            $this->addMessage('Welcome');
 
             if (isset($_POST['LoginView::KeepMeLoggedIn']))
             {
                 setcookie('LoginView::CookieName', $this->username, time() + 3600);
                 setcookie('LoginView::CookiePassword', $this->password, time() + 3600);
             }
-
-            return true;
         }
-
-        return false;
+        else
+        {
+            $this->addMessage('Wrong name or password');
+        }
     }
 
     public function logout() {
@@ -98,11 +129,11 @@ class UserModel extends lab2\Model {
     public function register() {
         if ($this->canRegister())
         {
-            $query = 'INSERT INTO users (name, password) VALUES ("' . $this->username . '", "' . $this->password . '");';
+            $query = 'INSERT INTO users (name, password) VALUES (:name, :password);';
 
             if ($this->services['database']->insert($query))
             {
-                $this->addMessage('Success!');
+                $this->messages[] = 'Success!';
             }
             else
             {
@@ -136,15 +167,6 @@ class UserModel extends lab2\Model {
         }
 
         return $canRegister;
-    }
-
-    private function addMessage($message) {
-        if (isset($_SESSION['messages']) == false)
-        {
-            $_SESSION['messages'] = '';
-        }
-
-        $_SESSION['messages'] .= $message . '<br>';
     }
 
 }

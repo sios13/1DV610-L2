@@ -10,7 +10,7 @@ class Database {
 
     function __construct() {
         $dir = 'sqlite:db.db';
-        $this->dbh  = new \PDO($dir) or die("cannot open the database");
+        $this->dbh  = new \PDO($dir) or die('cannot open the database');
     }
         
     public function addServices($services) {
@@ -24,7 +24,10 @@ class Database {
     public function insert($query) {
         $statement = $this->dbh->prepare($query);
 
-        return $statement->execute(array());
+        $statement->bindValue(':name', 'hejhej');
+        $statement->bindValue(':password', 'hejhej');
+
+        return $statement->execute();
     }
 
 }
