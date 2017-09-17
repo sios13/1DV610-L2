@@ -32,9 +32,6 @@ class IndexController {
     }
 
     public function indexAction() {
-        $loginView = new LoginView($this->userModel);
-
-        // if posting
         if ($this->requestIsPost())
         {
             // if pressed the login button
@@ -57,15 +54,14 @@ class IndexController {
             $this->redirect();
         }
 
+        $loginView = new LoginView($this->userModel);
+
         $this->layoutView->render($loginView);
 
         $this->resetSession();
     }
 
     public function registerAction() {
-        $registerView = new RegisterView($this->userModel);
-
-        // if posting
         if ($this->requestIsPost())
         {
             // if pressed the register button
@@ -77,14 +73,11 @@ class IndexController {
 
                 $this->userModel->setUsername($username);
                 $this->userModel->setPassword($password);
+                $this->userModel->setPasswordRepeat($passwordRepeat);
 
                 $_SESSION['UsernameInput'] = strip_tags($username);
 
-                if ($password !== $passwordRepeat)
-                {
-                    $this->addMessage('Passwords do not match.');
-                }
-                else if ($this->userModel->register())
+                if ($this->userModel->register())
                 {
                     $this->addMessage('Success!');
                 }
@@ -92,6 +85,8 @@ class IndexController {
 
             $this->redirect();
         }
+
+        $registerView = new RegisterView($this->userModel);
 
         $this->layoutView->render($registerView);
         

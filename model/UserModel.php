@@ -6,12 +6,16 @@ class UserModel {
 
     private $password;
 
+    private $passwordRepeat;
+
     private $messages;
 
     public function __construct() {
         $this->username = null;
 
         $this->password = null;
+
+        $this->passwordRepeat = null;
 
         $this->db = new lab2\Database();
     }
@@ -39,6 +43,10 @@ class UserModel {
 
     public function setPassword($password) {
         $this->password = $password;
+    }
+
+    public function setPasswordRepeat($passwordRepeat) {
+        $this->passwordRepeat = $passwordRepeat;
     }
 
     public function getUsername() {
@@ -164,6 +172,13 @@ class UserModel {
         {
             $this->addMessage('Password has too few characters, at least 6 characters.');
             
+            $canRegister = false;
+        }
+
+        if ($this->password !== $this->passwordRepeat)
+        {
+            $this->addMessage('Passwords do not match.');
+
             $canRegister = false;
         }
 
