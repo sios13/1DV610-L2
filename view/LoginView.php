@@ -1,5 +1,7 @@
 <?php
 
+namespace view;
+
 class LoginView {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
@@ -10,10 +12,18 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
 
-	private $userModel;
+	private $gatekeeperModel;
 
-	public function __construct($userModel) {
-		$this->userModel = $userModel;
+	public function __construct($gatekeeperModel) {
+		$this->gatekeeperModel = $gatekeeperModel;
+	}
+
+	public function userTriesToLogIn() {
+		return isset($_POST[self::$login]);
+	}
+
+	public function userTriesToLogOut() {
+		return isset($_POST[self::$logout]);
 	}
 
 	/**
@@ -24,7 +34,7 @@ class LoginView {
 	 * @return  void BUT writes to standard output and cookies!
 	 */
 	public function response() {
-		if ($this->userModel->isLoggedIn())
+		if ($this->gatekeeperModel->isLoggedIn())
 		{
 			return $this->generateLogoutButtonHTML();
 		}
@@ -56,7 +66,7 @@ class LoginView {
 			<form method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $this->userModel->getMessages() . '</p>
+					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
 					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
@@ -73,22 +83,12 @@ class LoginView {
 		';
 	}
 
-	// private function getMessages() {
-	// 	if (isset($_SESSION['messages']))
-	// 	{
-	// 		return $_SESSION['messages'];
-	// 	}
-
-	// 	return '';
-	// }
+	private function getMessages() {
+		return $this->gatekeeperModel->getMessage();
+	}
 
 	private function getRequestUserName() {
-		if (isset($_SESSION['UsernameInput']))
-		{
-			return $_SESSION['UsernameInput'];
-		}
-
-		return '';
+		return $this->gatekeeperModel->getUsername();
 	}
 	
 }

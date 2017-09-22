@@ -1,7 +1,5 @@
 <?php
 
-namespace lab2;
-
 class Application {
 
     private $routes;
@@ -21,19 +19,48 @@ class Application {
     }
 
     public function handleRequest() {
-        $request_path = $this->getRequestPath();
+        // create models
+        // create base view
+        // database model
+        // session model/request model?
+        // exceptions - gör model av exceptions. flera klasser i samma fil som extends \Exception
+        // cookie model
+        // test case -> controller
+        // render i post
+
+        // does user try to login
+        // get user credantials
+        // did the user login
+
+        // create models
+        $gatekeeperModel = new \model\GatekeeperModel(new \model\DatabaseModel(), new \model\SessionModel());
+
+        $view = new \view\LayoutView($gatekeeperModel);
+
+        $requestPath = $this->getRequestPath();
+
+        // if ($requestPath == '')
+        // {
+        //     $view = new \view\LayoutView($gatekeeperModel);
+
+        //     $controller = new \controller\LoginController($gatekeeperModel, $view);
+        // }
+        // else if ($requestPath == '')
+        // {
+        //     $view = new \view\LayoutView(new RegisterView());
+
+        //     $controller = new \controller\RegisterController($gatekeeperModel, $view);
+        // }
+        
+        // $controller->indexAction();
 
         foreach ($this->routes as $route)
         {
             // Looking for a route with the requested url path
-            if ($route['path'] == $request_path)
+            if ($route['path'] == $requestPath)
             {
-                $controller = new $route['controller'];
-
-                if (method_exists($controller, 'initialize'))
-                {
-                    $controller->initialize();
-                }
+                // Initialize the controller
+                $controller = new $route['controller']($gatekeeperModel, $view);
 
                 // Run the controller-action
                 $controller->{$route['action']}();

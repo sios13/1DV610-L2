@@ -1,20 +1,14 @@
 <?php
 
-namespace lab2;
+namespace model;
 
-class Database {
-
-    private $services;
+class DatabaseModel {
 
     private $dbh;
 
     function __construct() {
         $dir = 'sqlite:db.db';
         $this->dbh  = new \PDO($dir) or die('cannot open the database');
-    }
-        
-    public function addServices($services) {
-        $this->services = $services;
     }
 
     public function fetchAll($query) {
