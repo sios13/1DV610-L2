@@ -21,6 +21,11 @@ class LoginController {
             $password = $loginView->getPassword();
 
             $this->gatekeeperModel->attemptLogin($username, $password);
+
+            if ($loginView->getCookieKeep() !== null)
+            {
+                $loginView->setCookie();
+            }
         }
 
         else if ($loginView->userTriesToLogOut())

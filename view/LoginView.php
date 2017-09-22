@@ -34,8 +34,18 @@ class LoginView {
 		return $_POST[self::$password];
 	}
 
-	public function enableWelcomeMessage() {
-		$this->welcomeMessage = true;
+	public function getCookieKeep() {
+		return $_POST[self::$keep];
+	}
+
+	public function setCookie() {
+		setcookie(self::$cookieName, $this->getUsername(), time() + 3600);
+		setcookie(self::$cookiePassword, $this->getPassword(), time() + 3600);
+	}
+
+	public function removeCookie() {
+		setcookie(self::$cookieName, '', time() - 3600);
+		setcookie(self::$cookiePassword, '', time() - 3600);
 	}
 
 	/**
