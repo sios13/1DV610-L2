@@ -8,26 +8,18 @@ class GatekeeperModel {
 
     private $sessionModel;
     
-    private $message;
-
-    private $username;
+    private $messages;
 
     public function __construct($databaseModel, $sessionModel) {
-        $this->message = '';
-
         $this->databaseModel = $databaseModel;
 
         $this->sessionModel = $sessionModel;
 
-        $this->username = '';
+        $this->messages = array();
     }
 
-    public function getErrorMessage() : string {
-        return $this->message;
-    }
-
-    public function getUsername() : string {
-        return $this->username;
+    public function getMessages() : array {
+        return $this->messages;
     }
 
     public function login() {
@@ -43,18 +35,16 @@ class GatekeeperModel {
     }
 
     public function isAllowedAccess($username, $password) {
-        $this->username = "hehe";
-
         if ($username == null)
         {
-            $this->message = 'Username is missing';
+            $this->messages[] = 'Username is missing';
 
             return false;
         }
 
         if ($password == null)
         {
-            $this->message = 'Password is missing';
+            $this->messages[] = 'Password is missing';
 
             return false;
         }
@@ -68,7 +58,7 @@ class GatekeeperModel {
             return true;
         }
 
-        $this->message = 'Wrong name or password';
+        $this->messages[] = 'Wrong name or password';
 
         return false;
 

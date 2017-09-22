@@ -14,12 +14,16 @@ class LoginView {
 
 	private $gatekeeperModel;
 
-	private $welcomeMessage;
-
 	public function __construct($gatekeeperModel) {
 		$this->gatekeeperModel = $gatekeeperModel;
+	}
 
-		$this->welcomeMessage = false;
+	public function userTriesToLogIn() {
+		return isset($_POST[self::$login]);
+	}
+
+	public function userTriesToLogOut() {
+		return isset($_POST[self::$logout]);
 	}
 
 	public function getUsername() {
@@ -32,14 +36,6 @@ class LoginView {
 
 	public function enableWelcomeMessage() {
 		$this->welcomeMessage = true;
-	}
-
-	public function userTriesToLogIn() {
-		return isset($_POST[self::$login]);
-	}
-
-	public function userTriesToLogOut() {
-		return isset($_POST[self::$logout]);
 	}
 
 	/**
@@ -66,7 +62,7 @@ class LoginView {
 	private function generateLogoutButtonHTML() {
 		return '
 			<form  method="post" >
-				<p id="' . self::$messageId . '">' . $this->getWelcomeMessage() . '</p>
+				<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
@@ -82,7 +78,7 @@ class LoginView {
 			<form method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $this->getErrorMessages() . '</p>
+					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
 					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
@@ -99,21 +95,12 @@ class LoginView {
 		';
 	}
 
-	private function getWelcomeMessage() {
-		if ($this->welcomeMessage)
-		{
-			return 'Welcome';
-		}
-		
-		return '';
-	}
-
-	private function getErrorMessages() {
-		return $this->gatekeeperModel->getErrorMessage();
+	private function getMessages() {
+		return join('', $this->gatekeeperModel->getMessages());
 	}
 
 	private function getRequestUserName() {
-		return $this->gatekeeperModel->getUsername();
+		return isset($_POST[self::$name]) ? $_POST[self::$name] : '';
 	}
 	
 }

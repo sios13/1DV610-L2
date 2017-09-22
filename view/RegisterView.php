@@ -8,11 +8,27 @@ class RegisterView {
     private static $password = 'RegisterView::Password';
     private static $passwordRepeat = 'RegisterView::PasswordRepeat';
     private static $messageId = 'RegisterView::Message';
+    
+    private $gatekeeperModel;
 
-    private $userModel;
+    public function __construct($gatekeeperModel) {
+        $this->gatekeeperModel = $gatekeeperModel;
+    }
 
-    public function __construct($userModel) {
-        $this->userModel = $userModel;
+    public function userTriesToRegister() {
+        return isset($_POST[self::$register]);
+    }
+
+    public function getUsername() {
+        return $_POST[self::$name];
+    }
+
+    public function getPassword() {
+        return $_POST[self::$password];
+    }
+
+    public function getPasswordRepeat() {
+        return $_POST[self::$passwordRepeat];
     }
 
 	public function response() {
@@ -39,11 +55,6 @@ class RegisterView {
     }
 
     private function getRequestUserName() {
-        if (isset($_SESSION['UsernameInput']))
-        {
-            return $_SESSION['UsernameInput'];
-        }
-
-        return '';
+        return isset($_POST[self::$name]) ? $_POST[self::$name] : '';
     }
 }
