@@ -13,7 +13,7 @@ class RegisterController {
     }
 
     public function indexAction() {
-        $registerView = new \view\RegisterView($gatekeeperModel);
+        $registerView = new \view\RegisterView($this->gatekeeperModel);
 
         if ($registerView->userTriesToRegister())
         {
@@ -21,7 +21,7 @@ class RegisterController {
             $password = $registerView->getPassword();
             $passwordRepeat = $registerView->getPasswordRepeat();
             
-            $this->gatekeeperModel->register($username, $password, $passwordRepeat);
+            $this->gatekeeperModel->attemptRegister($username, $password, $passwordRepeat);
         }
         
         $this->view->render($registerView);

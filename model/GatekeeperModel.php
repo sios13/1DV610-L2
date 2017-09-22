@@ -22,6 +22,10 @@ class GatekeeperModel {
         return $this->messages;
     }
 
+    public function isLoggedIn() {
+        return $this->sessionModel->has('isLoggedIn') && $this->sessionModel->get('isLoggedIn');
+    }
+
     public function logout() {
         if ($this->isLoggedIn())
         {
@@ -29,10 +33,6 @@ class GatekeeperModel {
         }
 
         $this->sessionModel->set('isLoggedIn', false);
-    }
-
-    public function isLoggedIn() {
-        return $this->sessionModel->has('isLoggedIn') && $this->sessionModel->get('isLoggedIn');
     }
 
     public function attemptLogin($username, $password) {
@@ -63,6 +63,40 @@ class GatekeeperModel {
         {
             $this->messages[] = 'Wrong name or password';
         }
+    }
+
+    public function attemptRegister($username, $password, $passwordRepeat) {
+        if ($this->infoIsCorrect($username, $password, $passwordRepeat))
+        {
+             // TODO register
+        }
+    }
+
+    private function infoIsCorrect($username, $password, $passwordRepeat) {
+        $infoIsCorrect = true;
+
+        if ($username == null || strlen($username) < 3)
+        {
+            $this->messages[] = 'Username has too few characters, at least 3 characters.';
+
+            $infoIsCorrect = false;
+        }
+
+        if ($password == null || strlen($password) < 6)
+        {
+            $this->messages[] = 'Password has too few characters, at least 6 characters.';
+            
+            $infoIsCorrect = false;
+        }
+
+        if ($password != $passwordRepeat)
+        {
+            $this->messages[] = 'Passwords do not match.';
+            
+            $infoIsCorrect = false;
+        }
+
+        return $infoIsCorrect;
     }
 
 }
