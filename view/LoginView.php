@@ -14,8 +14,24 @@ class LoginView {
 
 	private $gatekeeperModel;
 
+	private $welcomeMessage;
+
 	public function __construct($gatekeeperModel) {
 		$this->gatekeeperModel = $gatekeeperModel;
+
+		$this->welcomeMessage = false;
+	}
+
+	public function getUsername() {
+		return $_POST[self::$name];
+	}
+
+	public function getPassword() {
+		return $_POST[self::$password];
+	}
+
+	public function enableWelcomeMessage() {
+		$this->welcomeMessage = true;
 	}
 
 	public function userTriesToLogIn() {
@@ -50,7 +66,7 @@ class LoginView {
 	private function generateLogoutButtonHTML() {
 		return '
 			<form  method="post" >
-				<p id="' . self::$messageId . '">' . $this->userModel->getMessages() . '</p>
+				<p id="' . self::$messageId . '">' . $this->getWelcomeMessage() . '</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
@@ -66,7 +82,7 @@ class LoginView {
 			<form method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
+					<p id="' . self::$messageId . '">' . $this->getErrorMessages() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
 					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
@@ -83,8 +99,17 @@ class LoginView {
 		';
 	}
 
-	private function getMessages() {
-		return $this->gatekeeperModel->getMessage();
+	private function getWelcomeMessage() {
+		if ($this->welcomeMessage)
+		{
+			return 'Welcome';
+		}
+		
+		return '';
+	}
+
+	private function getErrorMessages() {
+		return $this->gatekeeperModel->getErrorMessage();
 	}
 
 	private function getRequestUserName() {

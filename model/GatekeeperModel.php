@@ -22,7 +22,7 @@ class GatekeeperModel {
         $this->username = '';
     }
 
-    public function getMessage() : string {
+    public function getErrorMessage() : string {
         return $this->message;
     }
 
@@ -47,26 +47,30 @@ class GatekeeperModel {
 
         if ($username == null)
         {
-            return $this->message = 'Username is missing';
-        }
-
-        if ($password == null)
-        {
-            return $this->message = 'Password is missing';
-        }
-
-        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1';
-
-        $rows = $this->database->fetchAll($query);
-
-        if (count($rows) != 1 && $rows[0]['password'] != $password)
-        {
-            $this->message = 'Wrong name or password';
+            $this->message = 'Username is missing';
 
             return false;
         }
 
-        return true;
+        if ($password == null)
+        {
+            $this->message = 'Password is missing';
+
+            return false;
+        }
+
+        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1';
+
+        $rows = $this->databaseModel->fetchAll($query);
+
+        if (count($rows) == 1 && $rows[0]['password'] == $password)
+        {
+            return true;
+        }
+
+        $this->message = 'Wrong name or password';
+
+        return false;
 
         // return count($rows) == 1 && $rows[0]['password'] == $password;
     }
