@@ -22,11 +22,12 @@ class GatekeeperModel {
         return $this->messages;
     }
 
-    public function login() {
-        $this->sessionModel->set('isLoggedIn', true);
-    }
-
     public function logout() {
+        if ($this->isLoggedIn())
+        {
+            $this->messages[] = 'Bye bye!';
+        }
+
         $this->sessionModel->set('isLoggedIn', false);
     }
 
@@ -34,35 +35,34 @@ class GatekeeperModel {
         return $this->sessionModel->has('isLoggedIn') && $this->sessionModel->get('isLoggedIn');
     }
 
-    public function isAllowedAccess($username, $password) {
+    public function attemptLogin($username, $password) {
         if ($username == null)
         {
-            $this->messages[] = 'Username is missing';
-
-            return false;
+            return $this->messages[] = 'Username is missing';
         }
 
         if ($password == null)
         {
-            $this->messages[] = 'Password is missing';
-
-            return false;
+            return $this->messages[] = 'Password is missing';
         }
 
         $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1';
 
-        $rows = $this->databaseModel->fetchAll($query);
+        $users = $this->databaseModel->fetchAll($query);
 
-        if (count($rows) == 1 && $rows[0]['password'] == $password)
+        if (isset($users[0]) && $users[0]['password'] == $password)
         {
-            return true;
+            if ($this->isLoggedIn() == false)
+            {
+                $this->messages[] = 'Welcome';
+            }
+
+            $this->sessionModel->set('isLoggedIn', true);
         }
-
-        $this->messages[] = 'Wrong name or password';
-
-        return false;
-
-        // return count($rows) == 1 && $rows[0]['password'] == $password;
+        else
+        {
+            $this->messages[] = 'Wrong name or password';
+        }
     }
 
 }

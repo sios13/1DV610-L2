@@ -20,7 +20,7 @@ class LoginController {
             $username = $loginView->getUsername();
             $password = $loginView->getPassword();
 
-            $this->gatekeeperModel->login($username, $password);
+            $this->gatekeeperModel->attemptLogin($username, $password);
         }
 
         else if ($loginView->userTriesToLogOut())
