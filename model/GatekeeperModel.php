@@ -46,7 +46,7 @@ class GatekeeperModel {
             return $this->messages[] = 'Password is missing';
         }
 
-        if ($this->databaseModel->userExists($username, $password))
+        if ($this->databaseModel->authenticateUser($username, $password))
         {
             if ($this->isLoggedIn() == false)
             {
@@ -62,7 +62,7 @@ class GatekeeperModel {
     }
 
     public function attemptCookieLogin($cookieUsername, $cookiePassword) {
-        if ($this->databaseModel->userExists($cookieUsername, $cookiePassword))
+        if ($this->databaseModel->authenticateUser($cookieUsername, $cookiePassword))
         {
             if ($this->isLoggedIn() == false)
             {
@@ -78,9 +78,9 @@ class GatekeeperModel {
     }
 
     public function attemptRegister($username, $password, $passwordRepeat) {
-        if ($this->infoIsCorrect($username, $password, $passwordRepeat))
+        if ($this->infoIsCorrect($username, $password, $passwordRepeat) == false)
         {
-             // TODO register
+            return;
         }
     }
 
@@ -113,6 +113,11 @@ class GatekeeperModel {
             $this->messages[] = 'Passwords do not match.';
             
             $infoIsCorrect = false;
+        }
+
+        if ($this->databaseModel->userExists($username, $password))
+        {
+            $this->messages[] = 'User exists, pick another username.';
         }
 
         return $infoIsCorrect;
