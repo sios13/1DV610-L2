@@ -1,5 +1,7 @@
 <?php
 
+namespace controller;
+
 class RegisterController {
     
     private $gatekeeperModel;

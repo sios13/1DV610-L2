@@ -34,8 +34,16 @@ class LoginView {
 		return $_POST[self::$password];
 	}
 
+	public function getCookieName() {
+		return isset($_COOKIE[self::$cookieName]) ? $_COOKIE[self::$cookieName] : null;
+	}
+
+	public function getCookiePassword() {
+		return isset($_COOKIE[self::$cookiePassword]) ? $_COOKIE[self::$cookiePassword] : null;
+	}
+
 	public function getCookieKeep() {
-		return $_POST[self::$keep];
+		return isset($_POST[self::$keep]) ? $_POST[self::$keep] : null;
 	}
 
 	public function setCookie() {

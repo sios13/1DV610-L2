@@ -10,10 +10,10 @@ class GatekeeperModel {
     
     private $messages;
 
-    public function __construct($databaseModel, $sessionModel) {
+    public function __construct($databaseModel) {
         $this->databaseModel = $databaseModel;
 
-        $this->sessionModel = $sessionModel;
+        $this->sessionModel = new \model\SessionModel();
 
         $this->messages = array();
     }
@@ -46,11 +46,7 @@ class GatekeeperModel {
             return $this->messages[] = 'Password is missing';
         }
 
-        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1';
-
-        $users = $this->databaseModel->fetchAll($query);
-
-        if (isset($users[0]) && $users[0]['password'] == $password)
+        if ($this->databaseModel->userExists($username, $password))
         {
             if ($this->isLoggedIn() == false)
             {
@@ -62,6 +58,22 @@ class GatekeeperModel {
         else
         {
             $this->messages[] = 'Wrong name or password';
+        }
+    }
+
+    public function attemptCookieLogin($cookieUsername, $cookiePassword) {
+        if ($this->databaseModel->userExists($cookieUsername, $cookiePassword))
+        {
+            if ($this->isLoggedIn() == false)
+            {
+                $this->messages[] = 'Welcome back with cookie';
+            }
+
+            $this->sessionModel->set('isLoggedIn', true);
+        }
+        else
+        {
+            $this->messages[] = 'Wrong information in cookie';
         }
     }
 

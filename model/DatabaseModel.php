@@ -24,4 +24,12 @@ class DatabaseModel {
         return $statement->execute();
     }
 
+    public function userExists($username, $password) {
+        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1';
+
+        $users = $this->fetchAll($query);
+
+        return isset($users[0]) && $users[0]['password'] == $password;
+    }
+
 }

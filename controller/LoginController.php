@@ -1,5 +1,7 @@
 <?php
 
+namespace controller;
+
 class LoginController {
     
     private $gatekeeperModel;
@@ -15,6 +17,18 @@ class LoginController {
     public function indexAction() {
         $loginView = new \view\LoginView($this->gatekeeperModel);
 
+        if ($loginView->getCookieName() !== null)
+        {
+            $this->gatekeeperModel->attemptCookieLogin($loginView->getCookieName(), $loginView->getCookiePassword());
+
+            if ($this->gatekeeperModel->isLoggedIn() == false)
+            {
+                $loginView->removeCookie();
+
+                $this->gatekeeperModel->logout();
+            }
+        }
+
         if ($loginView->userTriesToLogIn())
         {
             $username = $loginView->getUsername();
@@ -22,7 +36,7 @@ class LoginController {
 
             $this->gatekeeperModel->attemptLogin($username, $password);
 
-            if ($loginView->getCookieKeep() !== null)
+            if ($loginView->getCookieKeep() !== null && $this->gatekeeperModel->isLoggedIn())
             {
                 $loginView->setCookie();
             }
@@ -30,6 +44,8 @@ class LoginController {
 
         else if ($loginView->userTriesToLogOut())
         {
+            $loginView->removeCookie();
+
             $this->gatekeeperModel->logout();
         }
 

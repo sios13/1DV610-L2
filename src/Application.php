@@ -33,7 +33,7 @@ class Application {
         // did the user login
 
         // create models
-        $gatekeeperModel = new \model\GatekeeperModel(new \model\DatabaseModel(), new \model\SessionModel());
+        $gatekeeperModel = new \model\GatekeeperModel(new \model\DatabaseModel());
 
         $view = new \view\LayoutView($gatekeeperModel);
 
