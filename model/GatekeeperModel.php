@@ -120,6 +120,8 @@ class GatekeeperModel {
         if ($this->databaseModel->userExists($username, $password))
         {
             $this->messages[] = 'User exists, pick another username.';
+
+            return false;
         }
 
         return $infoIsCorrect;
