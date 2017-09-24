@@ -94,6 +94,13 @@ class GatekeeperModel {
             $infoIsCorrect = false;
         }
 
+        if ($username !== strip_tags($username))
+        {
+            $this->messages[] = 'Username contains invalid characters.';
+
+            $infoIsCorrect = false;
+        }
+
         if ($password == null || strlen($password) < 6)
         {
             $this->messages[] = 'Password has too few characters, at least 6 characters.';
