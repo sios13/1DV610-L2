@@ -23,7 +23,12 @@ class RegisterController {
             $password = $registerView->getPassword();
             $passwordRepeat = $registerView->getPasswordRepeat();
             
-            $this->gatekeeperModel->attemptRegister($username, $password, $passwordRepeat);
+            if ($this->gatekeeperModel->attemptRegister($username, $password, $passwordRepeat))
+            {
+                $_SESSION['successfull_registration_username'] = $username;
+
+                header('Location: index.php');
+            }
         }
         
         $this->view->render($registerView);

@@ -14,6 +14,8 @@ class LoginView {
 
 	private $gatekeeperModel;
 
+	private $usernameInput;
+
 	public function __construct($gatekeeperModel) {
 		$this->gatekeeperModel = $gatekeeperModel;
 	}
@@ -27,11 +29,11 @@ class LoginView {
 	}
 
 	public function getUsername() {
-		return $_POST[self::$name];
+		return isset($_POST[self::$name]) ? $_POST[self::$name] : '';
 	}
 
 	public function getPassword() {
-		return $_POST[self::$password];
+		return isset($_POST[self::$password]) ? $_POST[self::$password] : '';
 	}
 
 	public function getCookieName() {
@@ -54,6 +56,10 @@ class LoginView {
 	public function removeCookie() {
 		setcookie(self::$cookieName, '', time() - 3600);
 		setcookie(self::$cookiePassword, '', time() - 3600);
+	}
+
+	public function setUsernameInput($usernameInput) {
+		$this->usernameInput = $usernameInput;
 	}
 
 	/**
@@ -99,7 +105,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getRequestUserName() . '" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getUsername() . $this->usernameInput . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />

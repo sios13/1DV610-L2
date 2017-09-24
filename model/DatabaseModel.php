@@ -11,21 +11,22 @@ class DatabaseModel {
         $this->dbh  = new \PDO($dir) or die('cannot open the database');
     }
 
-    public function fetchAll($query) {
+    private function fetchAll($query) {
         return $this->dbh->query($query)->fetchAll();
     }
+    
+    public function addUser($username, $password) {
+        $query = "INSERT INTO users VALUES (:name, :password)";
 
-    public function insert($query) {
         $statement = $this->dbh->prepare($query);
-
-        $statement->bindValue(':name', 'hejhej');
-        $statement->bindValue(':password', 'hejhej');
+        $statement->bindValue(':name', $username);
+        $statement->bindValue(':password', $password);
 
         return $statement->execute();
     }
 
     public function userExists($username) {
-        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1';
+        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1;';
 
         $users = $this->fetchAll($query);
 
@@ -33,7 +34,7 @@ class DatabaseModel {
     }
 
     public function authenticateUser($username, $password) {
-        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1';
+        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1;';
 
         $users = $this->fetchAll($query);
 

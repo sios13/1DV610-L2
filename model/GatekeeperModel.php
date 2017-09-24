@@ -80,14 +80,16 @@ class GatekeeperModel {
     public function attemptRegister($username, $password, $passwordRepeat) {
         if ($this->infoIsCorrect($username, $password, $passwordRepeat) == false)
         {
-            return;
+            return false;
         }
+
+        return $this->databaseModel->addUser($username, $password);
     }
 
     private function infoIsCorrect($username, $password, $passwordRepeat) {
         $infoIsCorrect = true;
 
-        if ($username == null || strlen($username) < 3)
+        if (strlen($username) < 3)
         {
             $this->messages[] = 'Username has too few characters, at least 3 characters.';
 
@@ -101,7 +103,7 @@ class GatekeeperModel {
             $infoIsCorrect = false;
         }
 
-        if ($password == null || strlen($password) < 6)
+        if (strlen($password) < 6)
         {
             $this->messages[] = 'Password has too few characters, at least 6 characters.';
             

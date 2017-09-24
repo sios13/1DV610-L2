@@ -49,6 +49,13 @@ class LoginController {
             $this->gatekeeperModel->logout();
         }
 
+        if (isset($_SESSION['successfull_registration_username']))
+        {
+            $loginView->setUsernameInput($_SESSION['successfull_registration_username']);
+
+            unset($_SESSION['successfull_registration_username']);
+        }
+
         $this->view->render($loginView);
     }
 
