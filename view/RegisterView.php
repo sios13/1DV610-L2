@@ -59,6 +59,6 @@ class RegisterView {
     }
 
     private function getRequestUserName() {
-        return isset($_POST[self::$name]) ? $_POST[self::$name] : '';
+        return isset($_POST[self::$name]) ? strip_tags($_POST[self::$name]) : '';
     }
 }
