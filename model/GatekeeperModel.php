@@ -73,7 +73,7 @@ class GatekeeperModel {
         }
         else
         {
-            $this->messages[] = 'Wrong information in cookie';
+            $this->messages[] = 'Wrong information in cookies';
         }
     }
 
