@@ -27,7 +27,7 @@ class RegisterController {
             {
                 $_SESSION['successfull_registration_username'] = $username;
 
-                header('Location: index.php');
+                header('Location: /index.php');
             }
         }
         
