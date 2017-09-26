@@ -20,7 +20,7 @@ class DatabaseModel {
 
         $statement = $this->dbh->prepare($query);
         $statement->bindValue(':name', $username);
-        $statement->bindValue(':password', $password);
+        $statement->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
 
         return $statement->execute();
     }
@@ -40,7 +40,7 @@ class DatabaseModel {
     public function authenticateUser($username, $password) {
         $user = $this->getUser($username);
 
-        return isset($user) && $user['password'] == $password;
+        return isset($user) && password_verify($password, $user['password']);
     }
 
     public function authenticateUserCookie($cookieUsername, $cookiePassword) {

@@ -56,7 +56,6 @@ class GatekeeperModel {
             }
 
             $this->sessionModel->set('isLoggedIn', true);
-            $this->sessionModel->set('CookieSalt', substr(md5(microtime()),rand(0,26),5));
         }
         else
         {
@@ -65,9 +64,6 @@ class GatekeeperModel {
     }
 
     public function attemptCookieLogin($cookieUsername, $cookiePassword) {
-        // when login with cookie -> set cookiepassword field in db for the user to a random string
-        // set the random string to as cookiepassword in the cookie also
-        // when attempting cookie login -> compare the password in cookie with password in db
         if ($this->databaseModel->authenticateUserCookie($cookieUsername, $cookiePassword))
         {
             if ($this->isLoggedIn() == false)
@@ -90,6 +86,7 @@ class GatekeeperModel {
         }
 
         $this->messages[] = 'Registered new user.';
+
         return $this->databaseModel->addUser($username, $password);
     }
 
