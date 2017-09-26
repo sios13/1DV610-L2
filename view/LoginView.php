@@ -99,7 +99,7 @@ class LoginView {
 	*/
 	private function generateLoginFormHTML() {
 		return '
-			<form method="post" action="index.php"> 
+			<form method="post" action="?"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
