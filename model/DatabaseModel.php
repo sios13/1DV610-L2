@@ -28,7 +28,9 @@ class DatabaseModel {
     private function getUser($username) {
         $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1;';
 
-        return $this->fetchAll($query)[0];
+        $users = $this->fetchAll($query);
+
+        return isset($users[0]) ? $users[0] : null;
     }
 
     public function userExists($username) {
