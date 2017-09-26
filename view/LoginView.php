@@ -50,7 +50,7 @@ class LoginView {
 
 	public function setCookie() {
 		setcookie(self::$cookieName, $this->getUsername(), time() + 3600);
-		setcookie(self::$cookiePassword, $this->getPassword(), time() + 3600);
+		setcookie(self::$cookiePassword, password_hash($this->getPassword(), PASSWORD_DEFAULT), time() + 3600);
 	}
 
 	public function removeCookie() {

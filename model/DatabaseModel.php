@@ -25,20 +25,26 @@ class DatabaseModel {
         return $statement->execute();
     }
 
-    public function userExists($username) {
+    private function getUser($username) {
         $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1;';
 
-        $users = $this->fetchAll($query);
+        return $this->fetchAll($query)[0];
+    }
 
-        return isset($users[0]);
+    public function userExists($username) {
+        return $this->getUser($username) !== null;
     }
 
     public function authenticateUser($username, $password) {
-        $query = 'SELECT * FROM users WHERE name="' . $username . '" LIMIT 1;';
+        $user = $this->getUser($username);
 
-        $users = $this->fetchAll($query);
+        return isset($user) && $user['password'] == $password;
+    }
 
-        return isset($users[0]) && $users[0]['password'] == $password;
+    public function authenticateUserCookie($cookieUsername, $cookiePassword) {
+        $user = $this->getUser($cookieUsername);
+
+        return isset($user) && password_verify($user['password'], $cookiePassword);
     }
 
 }
