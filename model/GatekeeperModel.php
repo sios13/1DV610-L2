@@ -4,6 +4,8 @@ namespace model;
 
 class GatekeeperModel {
 
+    private static $isLoggedIn = 'GatekeeperModel::isLoggedIn';
+
     private $databaseModel;
 
     private $sessionModel;
@@ -22,7 +24,7 @@ class GatekeeperModel {
         return $this->messages;
     }
 
-    public function isLoggedIn() {
+    public function isLoggedIn() : bool {
         return $this->sessionModel->has('isLoggedIn') && $this->sessionModel->get('isLoggedIn');
     }
 
@@ -77,16 +79,17 @@ class GatekeeperModel {
         }
     }
 
-    public function attemptRegister($username, $password, $passwordRepeat) {
+    public function attemptRegister($username, $password, $passwordRepeat) : bool {
         if ($this->infoIsCorrect($username, $password, $passwordRepeat) == false)
         {
             return false;
         }
 
+        $this->messages[] = 'Registered new user.';
         return $this->databaseModel->addUser($username, $password);
     }
 
-    private function infoIsCorrect($username, $password, $passwordRepeat) {
+    private function infoIsCorrect($username, $password, $passwordRepeat) : bool {
         $infoIsCorrect = true;
 
         if (strlen($username) < 3)

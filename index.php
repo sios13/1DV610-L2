@@ -19,5 +19,4 @@ require_once('controller/RegisterController.php');
 
 // START APPLICATION
 $masterController = new \controller\MasterController();
-
 $masterController->indexAction();

@@ -14,7 +14,7 @@ class LoginView {
 
 	private $gatekeeperModel;
 
-	private $usernameInput;
+	private $inputUsername;
 
 	public function __construct($gatekeeperModel) {
 		$this->gatekeeperModel = $gatekeeperModel;
@@ -58,8 +58,8 @@ class LoginView {
 		setcookie(self::$cookiePassword, '', time() - 3600);
 	}
 
-	public function setUsernameInput($usernameInput) {
-		$this->usernameInput = $usernameInput;
+	public function setInputUsername($inputUsername) {
+		$this->inputUsername = $inputUsername;
 	}
 
 	/**
@@ -99,13 +99,13 @@ class LoginView {
 	*/
 	private function generateLoginFormHTML() {
 		return '
-			<form method="post" > 
+			<form method="post" action="index.php"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getUsername() . $this->usernameInput . '" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getUsername() . $this->inputUsername . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />

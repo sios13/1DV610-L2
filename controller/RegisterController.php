@@ -8,7 +8,7 @@ class RegisterController {
 
     private $view;
 
-    public function __construct($gatekeeperModel, $view) {
+    public function __construct(\model\GatekeeperModel $gatekeeperModel, \view\LayoutView $view) {
         $this->gatekeeperModel = $gatekeeperModel;
 
         $this->view = $view;
@@ -17,6 +17,11 @@ class RegisterController {
     public function indexAction() {
         $registerView = new \view\RegisterView($this->gatekeeperModel);
 
+        // try {
+
+        // } catch () {
+
+        // }
         if ($registerView->userTriesToRegister())
         {
             $username = $registerView->getUsername();
@@ -25,9 +30,9 @@ class RegisterController {
             
             if ($this->gatekeeperModel->attemptRegister($username, $password, $passwordRepeat))
             {
-                $_SESSION['successfull_registration_username'] = $username;
-
-                header('Location: /index.php');
+                $loginView = new \view\LoginView($this->gatekeeperModel);
+                $loginView->setInputUsername($registerView->getUsername());
+                return $this->view->render($loginView);
             }
         }
         
