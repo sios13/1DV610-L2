@@ -48,9 +48,11 @@ class LoginView {
 		return isset($_POST[self::$keep]) ? $_POST[self::$keep] : null;
 	}
 
-	public function setCookie() {
-		setcookie(self::$cookieName, $this->getUsername(), time() + 3600);
-		setcookie(self::$cookiePassword, password_hash($this->getPassword(), PASSWORD_DEFAULT), time() + 3600);
+	public function setCookie($tempPassword, $timeout) {
+		$username = $this->getUsername() == '' ? $this->getCookieName() : $this->getUsername();
+
+		setcookie(self::$cookieName, $username, $timeout);
+		setcookie(self::$cookiePassword, $tempPassword, $timeout);
 	}
 
 	public function removeCookie() {

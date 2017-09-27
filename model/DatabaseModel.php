@@ -14,9 +14,20 @@ class DatabaseModel {
     private function fetchAll($query) {
         return $this->dbh->query($query)->fetchAll();
     }
-    
+
+    public function addCookie($username, $tempPassword, $timeout) {
+        $query = "UPDATE users SET cookie_password = :tempPassword, cookie_timer = :timeout WHERE name = :username";
+
+        $statement = $this->dbh->prepare($query);
+        $statement->bindValue(':tempPassword', $tempPassword);
+        $statement->bindValue(':timeout', $timeout);
+        $statement->bindValue(':username', $username);
+
+        return $statement->execute();
+    }
+
     public function addUser($username, $password) {
-        $query = "INSERT INTO users VALUES (:name, :password)";
+        $query = "INSERT INTO users (name, password) VALUES (:name, :password)";
 
         $statement = $this->dbh->prepare($query);
         $statement->bindValue(':name', $username);
@@ -46,7 +57,7 @@ class DatabaseModel {
     public function authenticateUserCookie($cookieUsername, $cookiePassword) {
         $user = $this->getUser($cookieUsername);
 
-        return isset($user) && password_verify($user['password'], $cookiePassword);
+        return isset($user) && $user['cookie_password'] == $cookiePassword;
     }
 
 }

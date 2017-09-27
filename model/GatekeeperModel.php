@@ -37,6 +37,10 @@ class GatekeeperModel {
         $this->sessionModel->set('isLoggedIn', false);
     }
 
+    public function addCookie($username, $tempPassword, $timeout) : bool {
+        return $this->databaseModel->addCookie($username, $tempPassword, $timeout);
+    }
+
     public function attemptLogin($username, $password) {
         if ($username == null)
         {
@@ -64,12 +68,14 @@ class GatekeeperModel {
     }
 
     public function attemptCookieLogin($cookieUsername, $cookiePassword) {
+        if ($this->isLoggedIn())
+        {
+            return;
+        }
+
         if ($this->databaseModel->authenticateUserCookie($cookieUsername, $cookiePassword))
         {
-            if ($this->isLoggedIn() == false)
-            {
-                $this->messages[] = 'Welcome back with cookie';
-            }
+            $this->messages[] = 'Welcome back with cookie';
 
             $this->sessionModel->set('isLoggedIn', true);
         }
