@@ -28,16 +28,6 @@ class GatekeeperModel {
         return $this->sessionModel->has(self::$isLoggedIn) && $this->sessionModel->get(self::$isLoggedIn) && $this->sessionModel->get(self::$browser) == $_SERVER['HTTP_USER_AGENT'];
     }
 
-    public function checkBrowser() {
-        if ($this->sessionModel->has(self::$browser))
-        {
-            if ($this->sessionModel->get(self::$browser) !== $_SERVER['HTTP_USER_AGENT'])
-            {
-                $this->logout();
-            }
-        }
-    }
-
     public function logout() {
         if ($this->isLoggedIn())
         {
@@ -66,7 +56,14 @@ class GatekeeperModel {
         {
             if ($this->isLoggedIn() == false)
             {
-                $this->messages[] = 'Welcome';
+                if (isset($_POST['LoginView::KeepMeLoggedIn']))
+                {
+                    $this->messages[] = 'Welcome and you will be remembered';
+                }
+                else
+                {
+                    $this->messages[] = 'Welcome';
+                }
             }
 
             $this->sessionModel->set(self::$isLoggedIn, true);
