@@ -5,9 +5,9 @@ namespace model;
 class GatekeeperModel {
 
     private static $isLoggedIn = 'GatekeeperModel::isLoggedIn';
+    private static $browser = 'GatekeeperModel::Browser';
 
     private $databaseModel;
-
     private $sessionModel;
     
     private $messages;
@@ -25,7 +25,17 @@ class GatekeeperModel {
     }
 
     public function isLoggedIn() : bool {
-        return $this->sessionModel->has('isLoggedIn') && $this->sessionModel->get('isLoggedIn');
+        return $this->sessionModel->has(self::$isLoggedIn) && $this->sessionModel->get(self::$isLoggedIn);
+    }
+
+    public function checkBrowser() {
+        if ($this->sessionModel->has(self::$browser))
+        {
+            if ($this->sessionModel->get(self::$browser) !== $_SERVER['HTTP_USER_AGENT'])
+            {
+                $this->logout();
+            }
+        }
     }
 
     public function logout() {
@@ -34,7 +44,7 @@ class GatekeeperModel {
             $this->messages[] = 'Bye bye!';
         }
 
-        $this->sessionModel->set('isLoggedIn', false);
+        $this->sessionModel->set(self::$isLoggedIn, false);
     }
 
     public function addCookie($username, $tempPassword, $timeout) : bool {
@@ -59,7 +69,8 @@ class GatekeeperModel {
                 $this->messages[] = 'Welcome';
             }
 
-            $this->sessionModel->set('isLoggedIn', true);
+            $this->sessionModel->set(self::$isLoggedIn, true);
+            $this->sessionModel->set(self::$browser, $_SERVER['HTTP_USER_AGENT']);
         }
         else
         {
@@ -77,7 +88,8 @@ class GatekeeperModel {
         {
             $this->messages[] = 'Welcome back with cookie';
 
-            $this->sessionModel->set('isLoggedIn', true);
+            $this->sessionModel->set(self::$isLoggedIn, true);
+            $this->sessionModel->set(self::$browser, $_SERVER['HTTP_USER_AGENT']);
         }
         else
         {

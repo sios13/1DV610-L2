@@ -17,6 +17,8 @@ class LoginController {
     public function indexAction() {
         $loginView = new \view\LoginView($this->gatekeeperModel);
 
+        $this->gatekeeperModel->checkBrowser();
+
         // If not logged in and there is a cookie
         if ($this->gatekeeperModel->isLoggedIn() == false && $loginView->getCookieName() !== null)
         {
