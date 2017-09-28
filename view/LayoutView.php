@@ -33,7 +33,7 @@ class LayoutView {
     }
 
     private function renderRegisterOrBack() {
-        if (isset($_GET['register']))
+        if (isset($_GET['register']) && !isset($_POST['RegisterView::Register']))
         {
             return '<a href="?">Back to login</a>';
         }
