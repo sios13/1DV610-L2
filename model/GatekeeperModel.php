@@ -25,7 +25,7 @@ class GatekeeperModel {
     }
 
     public function isLoggedIn() : bool {
-        return $this->sessionModel->has(self::$isLoggedIn) && $this->sessionModel->get(self::$isLoggedIn);
+        return $this->sessionModel->has(self::$isLoggedIn) && $this->sessionModel->get(self::$isLoggedIn) && $this->sessionModel->get(self::$browser) == $_SERVER['HTTP_USER_AGENT'];
     }
 
     public function checkBrowser() {
