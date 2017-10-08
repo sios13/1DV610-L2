@@ -128,12 +128,18 @@ class LoginView {
 	 * @return  void BUT writes to standard output and cookies!
 	 */
 	public function response() {
-		if ($this->gatekeeperModel->isLoggedIn())
-		{
-			return $this->generateLogoutButtonHTML();
+		$response = '';
+
+		if ($this->gatekeeperModel->isLoggedIn()) {
+			$response .= $this->generateLogoutButtonHTML();
+			$response .= $this->generateUsernameList();
+		}
+		else {
+			$response .= $this->generateLoginFormHTML();
+			$response .= $this->generateEmptyUsernameList();
 		}
 
-		return $this->generateLoginFormHTML();
+		return $response;
 	}
 
 	/**
@@ -174,6 +180,28 @@ class LoginView {
 					<input type="submit" name="' . self::$login . '" value="login" />
 				</fieldset>
 			</form>
+		';
+	}
+
+	private function generateEmptyUsernameList() {
+		return '
+			<h2>List of users</h2>
+			<p>You are not logged in. Log in to see a list of all users.</p>
+		';
+	}
+
+	private function generateUsernameList() {
+		$usernames = $this->gatekeeperModel->getListOfUsernames();
+		$usernamesList = '';
+		foreach ($usernames as $username) {
+			$usernamesList .= '<li>' . $username . '</li>';
+		}
+
+		return '
+			<h2>List of users</h2>
+			<ul>
+				' . $usernamesList . '
+			</ul>
 		';
 	}
 	

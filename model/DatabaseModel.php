@@ -55,4 +55,13 @@ class DatabaseModel {
             && (password_verify($password, $user['password']) || $password === $user['cookie_password']);
     }
 
+    public function getAllUsers() {
+        $users = $this->fetchAll('SELECT * FROM users;');
+        $usernames = array();
+        foreach ($users as $user) {
+            $usernames[] = $user['name'];
+        }
+        return $usernames;
+    }
+
 }

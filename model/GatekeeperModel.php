@@ -59,4 +59,8 @@ class GatekeeperModel {
         return $this->databaseModel->addUser($username, $password);
     }
 
+    public function getListOfUsernames() {
+        return $this->databaseModel->getAllUsers();
+    }
+
 }
