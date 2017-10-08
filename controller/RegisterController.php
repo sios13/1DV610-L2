@@ -5,38 +5,31 @@ namespace controller;
 class RegisterController {
     
     private $gatekeeperModel;
-
     private $view;
 
-    public function __construct(\model\GatekeeperModel $gatekeeperModel, \view\LayoutView $view) {
+    public function __construct(\model\GatekeeperModel $gatekeeperModel, \view\LayoutView $layoutView) {
         $this->gatekeeperModel = $gatekeeperModel;
-
-        $this->view = $view;
+        $this->layoutView = $layoutView;
     }
 
-    public function indexAction() {
+    public function handleRegister() {
         $registerView = new \view\RegisterView($this->gatekeeperModel);
 
-        // try {
-
-        // } catch () {
-
-        // }
-        if ($registerView->userTriesToRegister())
+        if ($registerView->userTriesToRegister() && $registerView->userInfoIsValid())
         {
             $username = $registerView->getUsername();
             $password = $registerView->getPassword();
             $passwordRepeat = $registerView->getPasswordRepeat();
             
-            if ($this->gatekeeperModel->attemptRegister($username, $password, $passwordRepeat))
+            if ($this->gatekeeperModel->register($username, $password, $passwordRepeat))
             {
                 $loginView = new \view\LoginView($this->gatekeeperModel);
                 $loginView->setInputUsername($registerView->getUsername());
-                return $this->view->render($loginView);
+                return $this->layoutView->render($loginView);
             }
         }
-        
-        $this->view->render($registerView);
+
+        $this->layoutView->setView($registerView);
     }
 
 }

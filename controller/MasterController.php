@@ -3,31 +3,25 @@
 namespace controller;
 
 class MasterController {
-    
-    public function indexAction() {
-        session_start();
 
-        $gatekeeperModel = new \model\GatekeeperModel(new \model\DatabaseModel());
-        $view = new \view\LayoutView($gatekeeperModel);
+    private $gatekeeperModel;
+    private $layoutView;
 
-        // $view->addMessages($gatekeeperModel->getMessages());
-
-        $requestPath = $this->getRequestPath();
-
-        if ($requestPath == '/')
-        {
-            $controller = new \controller\LoginController($gatekeeperModel, $view);
-            $controller->indexAction();
-        }
-        else if ($requestPath == '/register')
-        {
-            $controller = new \controller\RegisterController($gatekeeperModel, $view);
-            $controller->indexAction();
-        }
+    public function __construct(\model\GatekeeperModel $gatekeeperModel, \view\LayoutView $layoutView) {
+        $this->gatekeeperModel = $gatekeeperModel;
+        $this->layoutView = $layoutView;
     }
 
-    private function getRequestPath() {
-        return '/' . join('/', array_keys($_GET));
+    public function handleRequest() {
+        // Routing
+        if ($this->layoutView->userWantsToLogin()) {
+            $loginController = new \controller\LoginController($this->gatekeeperModel, $this->layoutView);
+            $loginController->handle();
+        }
+        else if ($this->layoutView->userWantsToRegister()) {
+            $registerController = new \controller\RegisterController($this->gatekeeperModel, $this->layoutView);
+            $registerController->handleRegister();
+        }
     }
 
 }

@@ -10,9 +10,15 @@ class RegisterView {
     private static $messageId = 'RegisterView::Message';
     
     private $gatekeeperModel;
+    private $requestModel;
+
+    private $messages;
 
     public function __construct($gatekeeperModel) {
         $this->gatekeeperModel = $gatekeeperModel;
+        // $this->requestModel = new \model\RequestModel();
+
+        $this->messages = array();
     }
 
     public function userTriesToRegister() {
@@ -29,6 +35,36 @@ class RegisterView {
 
     public function getPasswordRepeat() {
         return $_POST[self::$passwordRepeat];
+    }
+
+    public function userInfoIsValid() : bool {
+        $username = $this->getUsername();
+        $password = $this->getPassword();
+        $passwordRepeat = $this->getPasswordRepeat();
+
+        $infoIsValid = true;
+
+        if (strlen($username) < 3) {
+            $this->messages[] = 'Username has too few characters, at least 3 characters.';
+            $infoIsValid = false;
+        }
+
+        if ($username !== strip_tags($username)) {
+            $this->messages[] = 'Username contains invalid characters.';
+            $infoIsValid = false;
+        }
+
+        if (strlen($password) < 6) {
+            $this->messages[] = 'Password has too few characters, at least 6 characters.';
+            $infoIsValid = false;
+        }
+
+        if ($password != $passwordRepeat) {
+            $this->messages[] = 'Passwords do not match.';
+            $infoIsValid = false;
+        }
+
+        return $infoIsValid;
     }
 
 	public function response() {
@@ -55,10 +91,11 @@ class RegisterView {
     }
 
     private function getMessages() {
-        return join('<br>', $this->gatekeeperModel->getMessages());
+        return join('<br>', $this->messages);
     }
 
     private function getRequestUserName() {
+        // return $this->requestModel->get(self::$name);
         return isset($_POST[self::$name]) ? strip_tags($_POST[self::$name]) : '';
     }
 }

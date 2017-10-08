@@ -3,68 +3,84 @@
 namespace controller;
 
 class LoginController {
-    
+
     private $gatekeeperModel;
+    private $layoutView;
 
-    private $view;
-
-    public function __construct($gatekeeperModel, $view) {
+    public function __construct(\model\GatekeeperModel $gatekeeperModel, \view\LayoutView $layoutView) {
         $this->gatekeeperModel = $gatekeeperModel;
-
-        $this->view = $view;
+        $this->layoutView = $layoutView;
     }
 
-    public function indexAction() {
+    public function handle() {
         $loginView = new \view\LoginView($this->gatekeeperModel);
 
-        // If not logged in and there is a cookie
-        if ($this->gatekeeperModel->isLoggedIn() == false && $loginView->getCookieName() !== null)
-        {
-            $this->gatekeeperModel->attemptCookieLogin($loginView->getCookieName(), $loginView->getCookiePassword());
+        $this->handleCookieLogin($loginView);
 
-            if ($this->gatekeeperModel->isLoggedIn())
-            {
-                $this->addTempPasswordAndTimeout($loginView);
-            }
-
-            else if ($this->gatekeeperModel->isLoggedIn() == false)
-            {
-                $loginView->removeCookie();
-
-                $this->gatekeeperModel->logout();
-            }
+        if ($loginView->userTriesToLogin()) {
+            $this->handleLogin($loginView);
+        }
+        if ($loginView->userTriesToLogout()) {
+            $this->handleLogout($loginView);
         }
 
-        if ($loginView->userTriesToLogIn() && $this->gatekeeperModel->isLoggedIn() == false)
-        {
-            $username = $loginView->getUsername();
-            $password = $loginView->getPassword();
-
-            $this->gatekeeperModel->attemptLogin($username, $password);
-
-            if ($loginView->getCookieKeep() !== null && $this->gatekeeperModel->isLoggedIn())
-            {
-                $this->addTempPasswordAndTimeout($loginView);
-            }
-        }
-
-        else if ($loginView->userTriesToLogOut())
-        {
-            $loginView->removeCookie();
-
-            $this->gatekeeperModel->logout();
-        }
-
-        $this->view->render($loginView);
+        $this->layoutView->setView($loginView);
     }
 
-    private function addTempPasswordAndTimeout($loginView) {
-        $tempPassword = md5(chr(rand(65,90)) . chr(rand(65,90)) . chr(rand(65,90)) . chr(rand(65,90)) . chr(rand(65,90)));
-        $timeout = time() + 3600;
+    private function handleLogin(\view\LoginView $loginView) {
+        if ($this->gatekeeperModel->isLoggedIn()) {
+            return;
+        }
 
-        $loginView->setCookie($tempPassword, $timeout);
+        $userCredentials = $loginView->getUserCredentials();
 
-        $this->gatekeeperModel->addCookie($loginView->getUsername(), $tempPassword, $timeout);
+        if ($userCredentials === null) {
+            return;
+        }
+
+        $username = $userCredentials->getUsername();
+        $password = $userCredentials->getPassword();
+
+        if ($this->gatekeeperModel->login($username, $password)) {
+            if ($loginView->userWantsToBeRemembered()) {
+                $loginView->setCookie($userCredentials);
+                $this->gatekeeperModel->addCookie($userCredentials);
+            }
+
+            $loginView->enableWelcomeMessage();
+        }
+        else {
+            $loginView->enableWrongCredentialsMessage();
+        }
+    }
+
+    private function handleLogout(\view\LoginView $loginView) {
+        if ($this->gatekeeperModel->isLoggedIn()) {
+            $loginView->enableByeMessage();
+        }
+
+        $loginView->removeCookie();
+        $this->gatekeeperModel->logout();
+    }
+
+    private function handleCookieLogin(\view\LoginView $loginView) {
+        if ($this->gatekeeperModel->isLoggedIn()) {
+            return;
+        }
+
+        $username = $loginView->getCookieUsername();
+        $password = $loginView->getCookiePassword();
+
+        if ($username === null || $password === null) {
+            return;
+        }
+
+        if ($this->gatekeeperModel->login($username, $password)) {
+            $loginView->enableWelcomeMessageCookie();
+        } else {
+            $loginView->enableWrongCredentialsMessageCookie();
+        }
+
     }
 
 }

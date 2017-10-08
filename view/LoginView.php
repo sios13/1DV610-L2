@@ -13,55 +13,107 @@ class LoginView {
 	private static $messageId = 'LoginView::Message';
 
 	private $gatekeeperModel;
+	private $requestModel;
+	private $cookieModel;
+
+	private $message;
 
 	private $inputUsername;
 
 	public function __construct($gatekeeperModel) {
 		$this->gatekeeperModel = $gatekeeperModel;
+		$this->requestModel = new \model\RequestModel();
+		$this->cookieModel = new \model\CookieModel();
 	}
 
 	public function userTriesToLogIn() {
-		return isset($_POST[self::$login]);
+		return $this->requestModel->get(self::$login) !== null;
 	}
 
 	public function userTriesToLogOut() {
-		return isset($_POST[self::$logout]);
+		return $this->requestModel->get(self::$logout) !== null;
 	}
 
-	public function getUsername() {
-		return isset($_POST[self::$name]) ? $_POST[self::$name] : '';
+	public function userWantsToBeRemembered() {
+		return $this->requestModel->get(self::$keep) !== null;
 	}
 
-	public function getPassword() {
-		return isset($_POST[self::$password]) ? $_POST[self::$password] : '';
-	}
+	// public function getRequestUsername() {
+	// 	return $this->requestModel->get(self::$name);
+	// }
 
-	public function getCookieName() {
-		return isset($_COOKIE[self::$cookieName]) ? $_COOKIE[self::$cookieName] : null;
+	// public function getRequestPassword() {
+	// 	return $this->requestModel->get(self::$name);
+	// }
+
+	public function getCookieUsername() {
+		return $this->cookieModel->get(self::$cookieName);
 	}
 
 	public function getCookiePassword() {
-		return isset($_COOKIE[self::$cookiePassword]) ? $_COOKIE[self::$cookiePassword] : null;
+		return $this->cookieModel->get(self::$cookiePassword);
 	}
 
-	public function getCookieKeep() {
-		return isset($_POST[self::$keep]) ? $_POST[self::$keep] : null;
-	}
+	public function setCookie(\model\UserCredentials $userCredentials) {
+		$username = $userCredentials->getUsername();
+		$tempPassword = $userCredentials->getTempPassword();
+		$timeout = $userCredentials->getTimeout();
 
-	public function setCookie($tempPassword, $timeout) {
-		$username = $this->getUsername() == '' ? $this->getCookieName() : $this->getUsername();
-
-		setcookie(self::$cookieName, $username, $timeout);
-		setcookie(self::$cookiePassword, $tempPassword, $timeout);
+		$this->cookieModel->set(self::$cookieName, $username, $timeout);
+		$this->cookieModel->set(self::$cookiePassword, $tempPassword, $timeout);
 	}
 
 	public function removeCookie() {
-		setcookie(self::$cookieName, '', time() - 3600);
-		setcookie(self::$cookiePassword, '', time() - 3600);
+		$this->cookieModel->set(self::$cookieName, null, time() - 3600);
+		$this->cookieModel->set(self::$cookiePassword, null, time() - 3600);
 	}
 
 	public function setInputUsername($inputUsername) {
 		$this->inputUsername = $inputUsername;
+	}
+
+	public function getUserCredentials() {
+		$userCredentials = null;
+
+		try {
+			$username = $this->requestModel->get(self::$name);
+			$password = $this->requestModel->get(self::$password);
+
+			$userCredentials = new \model\UserCredentials($username, $password);
+		}
+		catch (\Exception\UsernameMissingException $exception) {
+			$this->message = 'Username is missing';
+		}
+		catch (\Exception\PasswordMissingException $exception) {
+			$this->message = 'Password is missing';
+		}
+
+		return $userCredentials;
+	}
+
+	public function enableWelcomeMessage() {
+		if ($this->userWantsToBeRemembered()) {
+			$this->message = 'Welcome and you will be remembered';
+		}
+		else {
+			$this->message = 'Welcome';
+		}
+	}
+
+	public function enableWrongCredentialsMessage() {
+		$this->message = 'Wrong name or password';
+	}
+
+	public function enableWelcomeMessageCookie() {
+		$this->message = 'Welcome back with cookie';
+	}
+
+	public function enableWrongCredentialsMessageCookie() {
+		$this->message = 'Wrong information in cookies';
+	}
+
+	public function enableByeMessage() {
+		$this->message = 'Bye bye!';
 	}
 
 	/**
@@ -88,7 +140,7 @@ class LoginView {
 	private function generateLogoutButtonHTML() {
 		return '
 			<form  method="post" >
-				<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
+				<p id="' . self::$messageId . '">' . $this->message . '</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
@@ -104,10 +156,10 @@ class LoginView {
 			<form method="post" action="?"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $this->getMessages() . '</p>
+					<p id="' . self::$messageId . '">' . $this->message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getUsername() . $this->inputUsername . '" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->requestModel->get(self::$name) . $this->inputUsername . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
@@ -119,14 +171,6 @@ class LoginView {
 				</fieldset>
 			</form>
 		';
-	}
-
-	private function getMessages() {
-		return join('', $this->gatekeeperModel->getMessages());
-	}
-
-	private function getRequestUserName() {
-		return isset($_POST[self::$name]) ? $_POST[self::$name] : '';
 	}
 	
 }

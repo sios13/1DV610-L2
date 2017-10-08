@@ -6,7 +6,7 @@ class DatabaseModel {
 
     private $dbh;
 
-    function __construct() {
+    public function __construct() {
         $dir = 'sqlite:../db.db';
         $this->dbh  = new \PDO($dir) or die('cannot open the database');
     }
@@ -48,16 +48,11 @@ class DatabaseModel {
         return $this->getUser($username) !== null;
     }
 
-    public function authenticateUser($username, $password) {
+    public function authenticateUser($username, $password) : bool {
         $user = $this->getUser($username);
 
-        return isset($user) && password_verify($password, $user['password']);
-    }
-
-    public function authenticateUserCookie($cookieUsername, $cookiePassword) {
-        $user = $this->getUser($cookieUsername);
-
-        return isset($user) && $user['cookie_password'] == $cookiePassword;
+        return $this->userExists($username)
+            && (password_verify($password, $user['password']) || $password === $user['cookie_password']);
     }
 
 }
