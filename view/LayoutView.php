@@ -42,17 +42,21 @@ class LayoutView {
     }
 
     private function showLink() {
-        if (isset($_GET['register']) && !isset($_POST['RegisterView::Register']))
-        {
+        if ($this->gatekeeperModel->isLoggedIn()) {
+            return '';
+        }
+
+        if ($this->userWantsToRegister()) {
             return '<a href="?">Back to login</a>';
         }
 
-        return '<a href="?register">Register a new user</a>';
+        if ($this->userWantsToLogin()) {
+            return '<a href="?register">Register a new user</a>';
+        }
     }
   
     private function showHeader() {
-        if ($this->gatekeeperModel->isLoggedIn())
-        {
+        if ($this->gatekeeperModel->isLoggedIn()) {
             return '<h2>Logged in</h2>';
         }
     

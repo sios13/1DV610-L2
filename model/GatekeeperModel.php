@@ -52,6 +52,10 @@ class GatekeeperModel {
     }
 
     public function register($username, $password, $passwordRepeat) : bool {
+        if ($this->databaseModel->userExists($username)) {
+            throw new \Exception\UserExistsException();
+        }
+
         return $this->databaseModel->addUser($username, $password);
     }
 

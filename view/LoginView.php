@@ -116,6 +116,10 @@ class LoginView {
 		$this->message = 'Bye bye!';
 	}
 
+	public function enableRegisteredMessage() {
+		$this->message = 'Registered user';
+	}
+
 	/**
 	 * Create HTTP response
 	 *

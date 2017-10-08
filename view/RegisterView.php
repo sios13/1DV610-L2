@@ -59,12 +59,16 @@ class RegisterView {
             $infoIsValid = false;
         }
 
-        if ($password != $passwordRepeat) {
+        if ($password !== $passwordRepeat) {
             $this->messages[] = 'Passwords do not match.';
             $infoIsValid = false;
         }
 
         return $infoIsValid;
+    }
+
+    public function enableUserExistsMessage() {
+        $this->messages[] = 'User already exists.';
     }
 
 	public function response() {
