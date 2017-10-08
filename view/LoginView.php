@@ -117,7 +117,7 @@ class LoginView {
 	}
 
 	public function enableRegisteredMessage() {
-		$this->message = 'Registered user';
+		$this->message = 'Registered new user.';
 	}
 
 	/**

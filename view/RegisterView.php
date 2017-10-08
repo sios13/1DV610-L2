@@ -68,7 +68,7 @@ class RegisterView {
     }
 
     public function enableUserExistsMessage() {
-        $this->messages[] = 'User already exists.';
+        $this->messages[] = 'User exists, pick another username.';
     }
 
 	public function response() {
