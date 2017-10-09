@@ -38,14 +38,6 @@ class LoginView {
 		return $this->requestModel->get(self::$keep) !== null;
 	}
 
-	// public function getRequestUsername() {
-	// 	return $this->requestModel->get(self::$name);
-	// }
-
-	// public function getRequestPassword() {
-	// 	return $this->requestModel->get(self::$name);
-	// }
-
 	public function getCookieUsername() {
 		return $this->cookieModel->get(self::$cookieName);
 	}
